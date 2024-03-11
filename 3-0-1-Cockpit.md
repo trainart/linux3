@@ -3,10 +3,10 @@
 
 ## Cockpit 
 
-Cockpit is a web-based graphical interface for administrating Linux servers.
+**Cockpit** is a web-based graphical interface for administrating Linux servers.
 It is available for most modern Linux versions.
 
-Cockpit provides a easy to use graphical interface to remote Linux servers.
+**Cockpit** provides a easy to use graphical interface to remote Linux servers.
 The interface enables admins to manage things like users/groups, 
 firewall settings, hardware info and more...
 
@@ -22,7 +22,6 @@ systemctl enable --now cockpit.socket
 
 
 You may need to add following for firewalld if it is enabled
-
 
 ```bash
 firewall-cmd --permanent --zone=public --add-service=cockpit ;\
@@ -50,13 +49,4 @@ And if so, try access with web browser:
 (you need to ignore security warning, since the SSL certificate is self-signed)
 
 `https://[ipaddress]:9090`
-
-
-Disable
-
-#### TASK
-
-Limit access to `127.0.0.1`
-
-Change port to other
 
