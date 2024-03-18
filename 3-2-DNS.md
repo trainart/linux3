@@ -404,7 +404,7 @@ dig -x 10.10.x.1 @127.0.0.1
 
 On another server install bind-chroot and create configuration to get zone copy as Slave Zone.
 
-1.Create slave zone config file `/var/named/chroot/etc/named/lt01.am.zone`
+1.Create slave zone config file `/var/named/chroot/etc/named/lt0x.am.zone`
 
 
 ```bash
