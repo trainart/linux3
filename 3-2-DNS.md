@@ -259,7 +259,7 @@ dig -t mx lt0x.am @10.10.x.1
 ### Configure the system to use your local DNS server 
 
 Let's configure the Linux server system to use our local DNS server we have just implemented. 
-Our goal is to have access to both our local domains `lt02.am`, ... as well as the internet dns system. 
+Our goal is to have access to both our local domains `lt0x.am`, ... as well as the internet dns system. 
 
 In order to do that you should change `/etc/resolv.conf` and set `nameserver 127.0.0.1` before any other `nameserver` lines.
 
