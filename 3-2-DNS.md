@@ -169,8 +169,8 @@ to
 
 > Each student should create own domain zone:
 > lt0x.am  (x – student’s number assigned by teacher)
-> Teacher’s zone will be lt01.am,  
-> Students zones: lt02.am, lt03.am, …
+> Teacher’s zone will be lt00.am,  
+> Students zones: lt01.am, lt02.am, …
 > (here and below each student should change the number x 
 > to his/her number assigned by teacher 
 > REMEMBER to include green part if bind-chroot is started 
