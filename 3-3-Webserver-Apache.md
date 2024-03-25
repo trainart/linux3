@@ -30,7 +30,7 @@ Install Apache and related stuff:
 > `dnf config-manager --set-enabled powertools`
 
 ```bash
-yum -y install httpd mod_ssl openssl elinks lynx
+yum -y install httpd mod_ssl openssl elinks lynx curl
 ```
 
 Enable & start: 
