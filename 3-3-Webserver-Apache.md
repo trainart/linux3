@@ -25,7 +25,9 @@ hostname
 
 Install Apache and related stuff: 
 
-For CentOS 8 first run this:  `dnf config-manager --set-enabled powertools`
+> IMPORTANT !<br>
+> For **CentOS 8** first run this: <br>
+> `dnf config-manager --set-enabled powertools`
 
 ```bash
 yum -y install httpd mod_ssl openssl elinks lynx
