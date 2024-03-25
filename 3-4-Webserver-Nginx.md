@@ -52,9 +52,8 @@ Now you should have running Apache webserver on port 8080, and Nginx on port 80
 
 ![img_2.png](img_2.png)
 
-Create virtual host config file for our domain `lt0x.am`
+Create virtual host config file `/etc/nginx/conf.d/lt0x.am.conf` for our domain `lt0x.am`
 ```bash
-cat << "EOF1" > /etc/nginx/conf.d/lt0x.am.conf
 server {
 listen *:80;
 access_log /var/log/nginx/lt0x.am-access.log;
@@ -75,7 +74,6 @@ location ~* \.(jpg|jpeg|gif|png|ico|css|bmp|swf|js|html|txt)$ {
 root /var/www/lt0x.am;
 }
 }
-EOF1
 
 ```
 Ensure SELinux is tuned off (to allow redirection from Nginx to Apache): 
@@ -111,10 +109,12 @@ links lt0x.am/inf.php
 
 ### Nginx configuration as standalone server
 
-We need to change configuration of our virtual host as follows
+We need to **change** configuration of our virtual host as follows
+
+**REPLACE** file `/etc/nginx/conf.d/lt0x.am.conf`
+with new one with text:
 
 ```bash
-cat << "EOF1" > /etc/nginx/conf.d/lt0x.am.conf
 server {
 listen *:80;
 access_log /var/log/nginx/lt0x.am-access.log;
@@ -125,22 +125,15 @@ location / {
 root /var/www/lt0x.am-nginx;
 }
 }
-EOF1
-
 ```
 
-Create new directory for Nginx virtual host:
+Create new `/var/www/lt0x.am-nginx` directory for Nginx virtual host
 
-```bash
-mkdir /var/www/lt0x.am-nginx
-```
 
-Put some index page there:
+Create `/var/www/lt0x.am-nginx/index.html` index page there:
+with text:
 ```bash
-cat << "EOF1" > /var/www/lt0x.am-nginx/index.html
 HI this is NGINX page
-EOF1
-
 ```
 
 Restart Nginx: 
@@ -149,11 +142,18 @@ Restart Nginx:
 systemctl restart nginx
 ```
 
-Now try opening some Nginx URL and Apache URL. You should see appropriate logs. 
+Now try opening some `Nginx` URL and `Apache` URL. 
 ```bash
 links lt0x.am
+```
+
+and
+
+```bash
 links lt0x.am:8080
 ```
+
+You should see appropriate logs.
 
 
 ### HAProxy : HTTP Load Balancing
@@ -165,7 +165,7 @@ This example is based on the environment like follows.
 ```bash
 --------+---------------------+----------------------+------------
         |                     |                      |
-        |10.10.10.10:80       |10.10.10.10:8080      |10.10.10.10:8088
+        |10.10.x.1:80         |10.10.x.1:8080        |10.10.x.1:8088
 +-------+--------+   +--------+---------+   +--------+---------+
 |   [ lt0x.am ]  |   | [ lt0x.am:8080 ] |   | [ lt0x.am:8088 ] |
 |     HAProxy    |   | Apache Server #1 |   |  Nginx Server#2  |
@@ -173,7 +173,7 @@ This example is based on the environment like follows.
 
 ```
 
-We already have Apache confugred to listed port `8080`, 
+We already have Apache configured to listed port `8080`, 
 but we need Nginx to be reconfigured to listen port `8088` as shown on scheme above.
 this way we will free port `80` for HAProxy balancer.
 
@@ -187,9 +187,8 @@ listen       8088 default_server;
 listen       [::]:8088 default_server;
 ```
  
-Replace file `/etc/nginx/conf.d/lt0x.am.conf` with another port:
+**REPLACE** file `/etc/nginx/conf.d/lt0x.am.conf` with another port:
 ```bash
-cat << "EOF1" > /etc/nginx/conf.d/lt0x.am.conf
 server {
 listen *:8088;
 access_log /var/log/nginx/lt0x.am-access.log;
@@ -200,8 +199,6 @@ location / {
 root /var/www/lt0x.am-nginx;
 }
 }
-EOF1
-
 ```
 
 Restart Nginx:
