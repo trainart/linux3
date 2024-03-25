@@ -168,9 +168,9 @@ to
 ### BIND configuration for master zone
 
 > Each student should create own domain zone:
-> lt0x.am  (x – student’s number assigned by teacher)
-> Teacher’s zone will be lt00.am.
-> Students zones: lt01.am, lt02.am, lt03.am, …
+> lt0x.am  (x – student’s number assigned by teacher)<br>
+> Teacher’s zone will be lt00.am.<br>
+> Students zones: lt01.am, lt02.am, lt03.am, …<br>
 > (here and below each student should change the number x 
 > to his/her number assigned by teacher) 
 > REMEMBER to include green part if bind-chroot is started 
