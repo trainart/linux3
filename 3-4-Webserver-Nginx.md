@@ -10,17 +10,16 @@ Nginx can work as a standalone webserver or as front end reverse proxy of Apache
 If we have Apache server installed on the same Linux server, we need to ensure Apache and Nginx are running on different ports.
 For example, we can change Apache config from default `80` port to `8080`. 
 
-Edit below lines in `/etc/httpd/conf/httpd.conf`
 ```bash
-#Listen 80
-Listen 8080
+sed -i 's/Listen 80/Listen 8080/g' /etc/httpd/conf/httpd.conf
 ```
 
-Edit below lines in `/etc/httpd/conf.d/lt0x.am.conf` 
+
 ```bash
-#<VirtualHost *:80> 
-<VirtualHost *:8080> 
+sed -i 's/*:80/*:8080/g' /etc/httpd/conf.d/lt0x.am.conf
 ```
+
+
 
 Restart Apache:
 ```bash
@@ -105,7 +104,7 @@ links lt0x.am/inf.php
 > REMINDER: the above will work only if: 
 > * you have local DNS server, with properly configured zone `lt0x.am` 
  and A record `lt0x.am` pointing to your server's IP address
-> * and your `/etc/resolv.conf` refers to `nameserver 127.0.0.1`
+> * and your `/etc/resolv.conf` refers to `nameserver 127.0.0.1` (or better to Teachers DNS that should have all domains in one)
 
 ### Nginx configuration as standalone server
 

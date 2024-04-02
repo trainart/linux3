@@ -76,6 +76,17 @@ ErrorLog /var/log/httpd/lt0x.am-error.log
 </VirtualHost>
 ```
 
+
+> REMEMBER to change `x` in every `lt0x.am` with your number.<br>
+> You can do that with commands like<br>
+> `sed -i 's/lt0x/lt01/g' /etc/httpd/conf.d/lt0x.am.conf`<br>
+> or<br>
+> `perl -pi -e "s/lt0x/lt01/" /etc/httpd/conf.d/lt0x.am.conf `<br>
+> But change `lt01` to your number before running it
+
+
+
+
 Create virtual host website directory:  
 ```bash
 mkdir /var/www/lt0x.am
@@ -407,11 +418,11 @@ with text:
 </VirtualHost>
 ```
 
-> REMEMBER to change `x` in every `lt0x.am` with your number.
-> You can do that with commands like
-> `sed -i 's/lt0x/lt01/g' /etc/httpd/conf.d/lt0x.am-ssl.conf`
-> or
-> `perl -pi -e "s/lt0x/lt01/" /etc/httpd/conf.d/lt0x.am-ssl.conf `
+> REMEMBER to change `x` in every `lt0x.am` with your number.<br>
+> You can do that with commands like<br>
+> `sed -i 's/lt0x/lt01/g' /etc/httpd/conf.d/lt0x.am-ssl.conf`<br>
+> or<br>
+> `perl -pi -e "s/lt0x/lt01/" /etc/httpd/conf.d/lt0x.am-ssl.conf `<br>
 > But change `lt01` to your number before running it
 
 
