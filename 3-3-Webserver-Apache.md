@@ -482,7 +482,6 @@ curl --location --insecure http://lt0x.am/mysqltest.php
 The following options can be set in configuration for that.
 
 
-
 First check current state:
 
 ```bash
@@ -495,6 +494,8 @@ Now add options and restart Apache
 cat  > /etc/httpd/conf.d/harden.conf  << "EOF1"
 ServerTokens Prod
 ServerSignature Off
+Timeout 45
+LimitRequestBody 1048576
 EOF1
 
 systemctl restart httpd   
@@ -502,30 +503,9 @@ systemctl restart httpd
 ```
 
 
-
-
-
-* Change
+And check again:
 ```bash
-AddType application/x-httpd-php .php 
-```
-to
-
-```bash
-AddType application/x-httpd-php .php .php~
-AddHandler php5-script .php .php~
-AddType text/html .php .php~
+curl -sI http://lt0x.am | grep Server
 ```
 
-
-* Remove `Indexes` from Options 
-
-* Hide PHP version (X-Powered-By) in `php.ini`
-(it could be located in different places /etc/php.ini, /etc/php5/apache2/php.ini, ) 
-> expose_php = Off
-
-* Reduce Timeout:		
-> Timeout 45
-
-* Limit big requests:	
-> LimitRequestBody 1048576
+You should not see any details now.
