@@ -240,19 +240,21 @@ Restart Apache:
 ```bash
 systemctl restart httpd
 ```
-
-Create test php script `/var/www/lt0x.am/inf.php`
-with text:
+Create test php script:   
 ```bash
-echo '<?php phpinfo(); ?>'
+echo '<?php 
+$name = "Linux Student";
+echo "Hi $name. PHP works here !";
+
+?>' > /var/www/lt0x.am/phpcheck.php
+
 ```
-
-
 
 Check: 
 ```bash
-links http://www.lt0x.am/inf.php
+links http://www.lt0x.am/phpcheck.php
 ```
+
 > (PHP configuration can be done in config files: `/etc/php.ini`, `/etc/php.d/`)
 
 Now we can create an PHP index file 
@@ -341,7 +343,7 @@ try {
 
 Check: 
 ```bash
-curl http://lt0x.am/mysqltest.php
+links http://lt0x.am/mysqltest.php
 ```
 
 Add data to database:
@@ -384,9 +386,9 @@ mv lt0x.am.key /etc/pki/tls/private
 
 ### Create SSL Virtual Host
 
-```bash
-create `> /etc/httpd/conf.d/lt0x.am-ssl.conf
+Create `/etc/httpd/conf.d/lt0x.am-ssl.conf`
 with text:
+
 ```bash
 <VirtualHost *:443>
         SSLEngine on
@@ -405,10 +407,26 @@ with text:
 </VirtualHost>
 ```
 
+> REMEMBER to change `x` in every `lt0x.am` with your number.
+> You can do that with commands like
+> `sed -i 's/lt0x/lt01/g' /etc/httpd/conf.d/lt0x.am-ssl.conf`
+> or
+> `perl -pi -e "s/lt0x/lt01/" /etc/httpd/conf.d/lt0x.am-ssl.conf `
+> But change `lt01` to your number before running it
+
+
 Restart Apache: 
 ```bash
 systemctl restart httpd 
 ```
+
+Check byt directly accessing with HTTPS: 
+
+```bash
+linx https://lt0x.am/
+```
+
+> NOTE! We use here `lynx` browser, since it is more loyal to self-signed certificates
 
 Redirect 80 port to 443 (SSL)
 
@@ -445,7 +463,7 @@ Now if you access the site at `80` port you will be automatically redirected to 
 
 Check: 
 ```bash
-curl http://lt0x.am/mysqltest.php
+linx http://lt0x.am/
 ```
 
 You will see the "301 Moved Permanently" message.
@@ -460,10 +478,31 @@ curl --location --insecure http://lt0x.am/mysqltest.php
 
 ### Hardening Apache
 
-* In order to hide Apache version, the following options are to be set in configuration:
+* It is always good practice to hide Apache version.
+The following options can be set in configuration for that.
 
-`ServerTokens Prod`
-`ServerSignature Off`
+
+
+First check current state:
+
+```bash
+curl -sI http://lt0x.am | grep Server
+```
+
+Now add options and restart Apache
+
+```bash
+cat  > /etc/httpd/conf.d/harden.conf  << "EOF1"
+ServerTokens Prod
+ServerSignature Off
+EOF1
+
+systemctl restart httpd   
+
+```
+
+
+
 
 
 * Change
