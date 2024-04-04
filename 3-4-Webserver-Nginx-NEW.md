@@ -222,7 +222,10 @@ Move default HAProxy config and create simple configuration.
 
 ```bash
 mv /etc/haproxy/haproxy.cfg{,.backup} ;\
-cat << "EOF1" > /etc/haproxy/haproxy.cfg
+```
+
+Create new `/etc/haproxy/haproxy.cfg` file:
+```bash
 # define frontend ( any name is OK for [http-in] )
 frontend http-in
     # listen 80 port
@@ -239,9 +242,10 @@ backend backend_servers
     # define backend servers
     server             node01 10.10.x.100:80 check
     server             node02 10.10.x.200:80 check
-EOF1
 
 ```
+
+> Change `10.10.x` to you number.
 
 Enable and start HAProxy
 ```bash
