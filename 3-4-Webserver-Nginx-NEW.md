@@ -175,7 +175,7 @@ links nginx.lt0x.am
 and
 
 ```bash
-links lt0x.am:8080
+links apache.lt0x.am
 ```
 
 You should see appropriate logs.
