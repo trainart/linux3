@@ -79,7 +79,7 @@ systemctl enable --now nginx
 Change default config to listen only port `80` of IP `10.10.x.200`
 
 ```bash
-sed -i 's/listen       80/listen       10.10.0.200:80/g' /etc/nginx/nginx.conf
+sed -i 's/listen       80/listen       10.10.x.200:80/g' /etc/nginx/nginx.conf
 ```
 
 Try starting Nginx again: 
@@ -133,7 +133,7 @@ with new one with text:
 
 ```bash
 server {
-listen 10.10.0.200:80;
+listen 10.10.x.200:80;
 access_log /var/log/nginx/nginx.lt0x.am-access.log;
 error_log /var/log/nginx/nginx.lt0x.am-error.log;
 server_name nginx.lt0x.am;
@@ -169,7 +169,7 @@ systemctl restart nginx
 
 Now try opening some `Nginx` URL and `Apache` URL. 
 ```bash
-links lt0x.am
+links nginx.lt0x.am
 ```
 
 and
