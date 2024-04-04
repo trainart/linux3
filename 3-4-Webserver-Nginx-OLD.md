@@ -126,7 +126,7 @@ root /var/www/lt0x.am-nginx;
 }
 ```
 
-Create new `/var/www/lt0x.am-nginx` directory for Nginx virtual host
+Create new `/var/www/nginx.lt0x.am` directory for Nginx virtual host
 
 
 Create `/var/www/lt0x.am-nginx/index.html` index page there:
