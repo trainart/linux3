@@ -221,7 +221,7 @@ yum -y install haproxy
 Move default HAProxy config and create simple configuration.
 
 ```bash
-mv /etc/haproxy/haproxy.cfg{,.backup} ;\
+mv /etc/haproxy/haproxy.cfg{,.backup}
 ```
 
 Create new `/etc/haproxy/haproxy.cfg` file:
