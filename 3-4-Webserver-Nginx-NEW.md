@@ -179,12 +179,17 @@ links apache.lt0x.am
 ```
 
 You should see appropriate logs.
-
+Check the logs of both Nginx & Apache (open in different terminals to see simultaneously): 
+```bash
+tail -f /var/log/nginx/lt0x.am-access.log
+tail -f /var/log/httpd/lt0x.am-access.log
+```
 
 ### HAProxy : HTTP Load Balancing
 _(based on `https://www.server-world.info/en/note?os=CentOS_8&p=haproxy&f=1`)_
 	
-HAProxy allows to balance between multiple servers. Simple configuration of two servers we have Apache and Nginx follows.
+HAProxy allows to implement load balancing between multiple servers. <br>
+Simple configuration of two servers Apache and Nginx follows.
 
 This example is based on the environment like follows.
 ```bash
@@ -261,11 +266,17 @@ Now you connect to `lt0x.am` several times.
 You should see Apache and Nginx pages in rotation
 
 ```bash
-curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)' ; \
-curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)' ; \
-curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)' 
+curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)'
+```
+
+```bash
+curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)'
+```
+
+```bash
+curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)'
 ```
 
 
 > NOTE: this is very simple configuration example. Production solution requires much more to configure as well as
-> additional services like `keepalived`, `vrrp`, etc., which are our of scope of this tutorial
+> additional services like `keepalived`, `vrrp`, etc., which are out of scope of this training material.
