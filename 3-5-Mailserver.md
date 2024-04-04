@@ -76,7 +76,7 @@ All students need to change their server DNS resolvers to use teacher's DNS (spe
 
 #### Define hostname
 
-Set the hostname of each student to match appropriate separate domain (lt02.am,lt03.am,lt04.am,...).
+Set the hostname of each student to match appropriate separate domain (lt01.am,lt02.am,lt03.am,...).
 
 ```bash
 hostnamectl set-hostname lt0x.am ; hostname 
@@ -287,7 +287,7 @@ quit
 
 Try sending mail via terminal `mail` command 
 ```bash
-mail tester@lt01.am
+mail tester@lt0x.am
 ```
 
 Switch to `tester` user and check mail
