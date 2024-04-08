@@ -52,27 +52,16 @@ user's system, it is called an email client
 When it is a web interface used for interacting with the 
 incoming mail server, it is called **Webmail**. 
 
-### Prepare DNS configuration
+### Ensure you have prepare DNS configuration
 
-Before going to mail server, let's prepare the DNS system for that.
+Before going to mail server, let's ensure you have prepared the DNS system for that.
 
-#### Define separate domains for each student
+#### Separate domains for each student
 
-Each student should have configured separate domain **master** zone (lt02.am,lt03.am,lt04.am,...)
-according to:<br> 
-https://github.com/arthur7373/linux-training/blob/main/level3/3-2-DNS.md#bind-configuration-for-master-zone
+* Each student should have configured separate domain **master** zone (lt01.am,lt02.am,lt03.am,...)
+* Teacher will configure **slave** zones for each such domain (lt01.am,lt02.am,lt03.am,...)
+* Make sure your Linux system has teacher's IP in /etc/resolv.conf as first `nameserver`. As a result all will know about all domains.
 
-Also make sure you have configured the system to use your local DNS server 
-according to:<br>
-https://github.com/arthur7373/linux-training/blob/main/level3/3-2-DNS.md#configure-the-system-to-use-your-local-dns-server
-
-Teacher will configure **slave** zones for each such domain (lt02.am,lt03.am,lt04.am,...) according to:<br>
-https://github.com/arthur7373/linux-training/blob/main/level3/3-2-DNS.md#slave-zones
-
-
-As a result teacher's DNS server will know about all that domains.
-
-All students need to change their server DNS resolvers to use teacher's DNS (specify teacher's IP in /etc/resolv.conf as first `nameserver`).
 
 #### Define hostname
 
@@ -121,7 +110,7 @@ inet_interfaces = all
 # goto line 183: add
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 # goto line 283: uncomment and specify your local network
-mynetworks = 127.0.0.0/8, 10.0.0.0/24
+mynetworks = 127.0.0.0/8, 10.0.0.0/8
 # goto line 438: uncomment (use Maildir)
 home_mailbox = Maildir/
 # goto line 593: add
@@ -257,18 +246,37 @@ Try following example
 
 ```bash
 telnet lt0x.am 25
+```
+
 > Trying 192.168.1.1...
 > Connected to lt0x.am.
 > Escape character is '^]'.
 > 220 lt0x.am SMTP on Fri, 3 Aug 2001 10:38:06 +0400
+
+```bash
 helo lo
-> 250 yahoo.com Hello root@lt0x.am [192.168.2.200], pleased to meet you
+```
+
+> 250 Hello root@lt0x.am, pleased to meet you
+
+```bash
 mail from: user@yahoo.com
+```
 > 250 user@yahoo.com... Sender ok
+
+```bash
 rcpt to: tester@lt0x.am     
+```
+
 > 250 tester@lt0x.am... Recipient ok
+
+```bash
 data
+```
+
 > 354 Enter mail, end with "." on a line by itself
+
+```bash
 From: "TEST" <test@mail.com>
 To: "TEST" <test@mail.com>
 Subject: Test message
@@ -279,9 +287,13 @@ Hello, This is a test message.
 Yours truly,
 Administrator
 .
-> 250 KAA24894 Message accepted for delivery
-quit
+```
 
+> 250 KAA24894 Message accepted for delivery
+
+```bash
+
+quit
 ```
 
 
