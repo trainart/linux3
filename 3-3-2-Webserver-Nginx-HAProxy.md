@@ -129,7 +129,7 @@ curl -sI http://nginx.lt0x.am | grep Server
 Create configuration of `nginx.lt0x.am` virtual host:
 
 Add new file `/etc/nginx/conf.d/nginx.lt0x.am.conf`
-with new one with text:
+with text:
 
 ```bash
 server {
