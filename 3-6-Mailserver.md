@@ -311,6 +311,9 @@ mail
 
 > Additionally `thunderbird` graphical Mail Client can be installed either on Windows or Linux
 > `yum -y install thunderbird`
+>
+>  Portable Windows version is at:
+> `https://portableapps.com/apps/internet/thunderbird_portable`
 
 ### Mail Log Report : pflogsumm
 
