@@ -42,10 +42,9 @@ order for them to be sent email.
 
 That is why Email service is not considered an **online** service, but instead is "**store-and-forward**" service 
 
-To keep everyone from checking other users' emails, **MAA** is protected 
-by a user name called a login and by a password. 
-Retrieving mail is done using a software program called an **MUA** 
-(Mail User Agent). When the **MUA** is a program installed on the 
+To keep everyone from checking other users' emails, **MAA** is protected by login/password. 
+Retrieving mail is done using a software program called an **MUA** (Mail User Agent). 
+When the **MUA** is a program installed on the 
 user's system, it is called an email client 
 (such as Mozilla Thunderbird, Microsoft Outlook). 
 
@@ -240,6 +239,49 @@ Install telnet if needed
 yum -y install telnet
 ```
 
+#### Add **Rsyslog** configuration to log Postfix and Dovecot logs separately.
+
+
+```bash
+cat > /etc/rsyslog.d/postfix.conf << "ENDTEXT"
+if $programname == "postfix" then /var/log/postfix.log
+ENDTEXT
+
+```
+
+```bash
+cat > /etc/rsyslog.d/dovecot.conf << "ENDTEXT"
+if $programname == "dovecot" then /var/log/dovecot.log
+ENDTEXT
+
+```
+
+Restart rsyslog:
+```bash
+systemctl restart rsyslog
+```
+
+Restart postfix:
+```bash
+systemctl restart postfix
+```
+
+Restart dovecot:
+```bash
+systemctl restart dovecot
+```
+
+Check
+
+```bash
+tail /var/log/postfix.log
+```
+
+Check
+
+```bash
+tail /var/log/dovecot.log
+```
 
 #### SMTP Session example
 Try following example
@@ -309,11 +351,147 @@ su - tester
 mail
 ```
 
+Check logs
+
+```bash
+tail /var/log/postfix.log
+```
+
+Send mail to Teacher's server
+
+```bash
+mail tester@lt00.am
+```
+
+Check logs
+
+```bash
+tail /var/log/postfix.log
+```
+
+
 > Additionally `thunderbird` graphical Mail Client can be installed either on Windows or Linux
 > `yum -y install thunderbird`
 >
 >  Portable Windows version is at:
 > `https://portableapps.com/apps/internet/thunderbird_portable`
+>
+> IMPORTANT! When configuring MailClient specify username as `tester` without domainname, since we use Linux users as test users.
+
+
+### MX configuration to route mails via central Hub (Teacher's Server)
+
+Make changes in DNS configuration 
+
+* Modify `MX` resource record for your domain to point to `mx2.lt0x.am`
+ 
+  * type:   `MX` 
+  * value:  `0 mx2.lt0x.am.`
+
+* Add `A` record for it.
+
+  * name:   `mx2` 
+  * type:   `A` 
+  * value:  `10.10.x.111`
+  
+
+Create new `PTR` record `111.x.10.10.in-addr.arpa.`
+
+* `mx2.lt0x.am` PTR record:
+
+  * type:		`PTR`
+  * name:       `111`
+  * value:	    `mx2.lt0x.am.`
+
+
+### Configuration of central Hub (Teacher's Server)
+
+Add following lines to `/etc/postfix/transport`
+
+With contents:
+```bash
+cat >> /etc/postfix/transport << "ENDTEXT"
+lt01.am smtp:[mail.lt01.am]:25
+lt02.am smtp:[mail.lt02.am]:25
+lt03.am smtp:[mail.lt03.am]:25
+lt04.am smtp:[mail.lt04.am]:25
+lt05.am smtp:[mail.lt05.am]:25
+lt06.am smtp:[mail.lt06.am]:25
+lt07.am smtp:[mail.lt07.am]:25
+ENDTEXT
+```
+
+
+Build that config
+```bash
+postmap /etc/postfix/transport
+```
+
+
+Add that to Postfix main config file `/etc/postfix/main.cf`
+
+```bash
+cat >> /etc/postfix/main.cf << "ENDTEXT"
+transport_maps = hash:/etc/postfix/transport
+ENDTEXT
+
+```
+
+Restart Postfix
+
+```bash
+systemctl restart postfix
+```
+
+
+### Configuration of Students servers
+
+
+Add following lines to `/etc/postfix/transport`
+
+With contents:
+```bash
+cat >> /etc/postfix/transport << "ENDTEXT"
+lt01.am smtp:[mail.lt00.am]:25
+lt02.am smtp:[mail.lt00.am]:25
+lt03.am smtp:[mail.lt00.am]:25
+lt04.am smtp:[mail.lt00.am]:25
+lt05.am smtp:[mail.lt00.am]:25
+lt06.am smtp:[mail.lt00.am]:25
+lt07.am smtp:[mail.lt00.am]:25
+ENDTEXT
+```
+
+Build that config
+```bash
+postmap /etc/postfix/transport
+```
+
+
+Add that to Postfix main config file `/etc/postfix/main.cf`
+
+```bash
+cat >> /etc/postfix/main.cf << "ENDTEXT"
+transport_maps = hash:/etc/postfix/transport
+ENDTEXT
+
+```
+
+Restart Postfix
+
+```bash
+systemctl restart postfix
+```
+    
+
+Now try sending mail to another domain and check the logs:
+
+```bash
+tail -f /var/log/postfix.log
+```
+
+
+
 
 ### Mail Log Report : pflogsumm
 
