@@ -369,6 +369,12 @@ Check logs
 tail /var/log/postfix.log
 ```
 
+Check mail queue
+
+```bash
+mailq
+```
+
 
 > Additionally `thunderbird` graphical Mail Client can be installed either on Windows or Linux
 > `yum -y install thunderbird`
@@ -379,11 +385,28 @@ tail /var/log/postfix.log
 > IMPORTANT! When configuring MailClient specify username as `tester` without domainname, since we use Linux users as test users.
 
 
+## Webmail infterface
+
+
+
+
+
+## Mail routing
+
+Mail routing may be organised in two ways:
+
+* Public MX-based routing
+  * to specify destination of mails coming from the world to **our domain**. 
+* Internal static forwarding to another mailserver
+  * to forward mails from one server to another 
+  * may be used for both **our domain** and **other domains**
+
+
 ### MX configuration to route mails via central Hub (Teacher's Server)
 
 Make changes in DNS configuration 
 
-* Modify `MX` resource record for your domain to point to `mx2.lt0x.am`
+* **Modify** `MX` resource record for your domain to point to `mx2.lt0x.am`
  
   * type:   `MX` 
   * value:  `0 mx2.lt0x.am.`
@@ -395,7 +418,7 @@ Make changes in DNS configuration
   * value:  `10.10.x.111`
   
 
-Create new `PTR` record `111.x.10.10.in-addr.arpa.`
+Update `PTR` record `111.x.10.10.in-addr.arpa.`
 
 * `mx2.lt0x.am` PTR record:
 
@@ -403,6 +426,13 @@ Create new `PTR` record `111.x.10.10.in-addr.arpa.`
   * name:       `111`
   * value:	    `mx2.lt0x.am.`
 
+Now your domain mails will go to Teacher's server.  
+But it doesn't mean they will be accepted there.
+To have them accepted we need to add some configuration there too.
+
+In order mail for some domain to be accepted by mailserver
+it should either be registered as local domain, or domain to forward mails somewhere.
+Below we configure the second for student's domains.
 
 ### Configuration of central Hub (Teacher's Server)
 
@@ -443,9 +473,43 @@ Restart Postfix
 systemctl restart postfix
 ```
 
+Now try to send mail from one to another
+and check logs where do they go.
+
+
+### Second MX as backup
+
+Make changes in DNS configuration 
+
+* **Add** second `MX` record for your domain to point to `bkpmx.lt0x.am`
+ 
+  * type:   `MX` 
+  * value:  `10 bkpmx.lt0x.am.`
+
+* Add `A` record for it.
+
+  * name:   `bkpmx` 
+  * type:   `A` 
+  * value:  `10.10.x.1`
+  
+
+> NOTE ! We have set lower priority `10`
+> So mail will go here if first server will not respond.
+
+Now Teacher will shutdown his postfix.
+and you can try sending mails to another student's domains.
+
+After sending check logs to see how mail was routed.
+
+
+```bash
+tail /var/log/postfix.log
+```
+
 
 ### Configuration of Students servers
 
+Here we will configure your domain mail to route to Teacher's server without MX.
 
 Add following lines to `/etc/postfix/transport`
 
@@ -489,6 +553,9 @@ Now try sending mail to another domain and check the logs:
 ```bash
 tail -f /var/log/postfix.log
 ```
+
+
+
 
 
 
