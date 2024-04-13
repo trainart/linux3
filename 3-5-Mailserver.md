@@ -396,6 +396,10 @@ Upgrade PHP to 7.4
 dnf -y module reset php:7.2 && dnf -y module enable php:7.4
 ```
 
+```bash
+yum -y install php php-common php-gd php-xml php-mbstring php-mysqlnd php-gd
+```
+
 Restart Apache
 ```bash
 systemctl restart httpd
@@ -438,6 +442,12 @@ Now try accessing  `http://apache.lt0x.am/webmail`
 
 You should be able to login with user `tester@lt0x.am`
 
+You should see incoming messages but will not be able to send yet.
+We need to enable Auth for sending
+(also ignore use of folders Sent, ... since this is just example installation)
+```bash
+sed -i 's/"useAuth": false/"useAuth": true/' /var/www/html/webmail/data/_data_/_default_/domains/lt0x.am.json
+```
 
 
 ## Mail routing
