@@ -387,7 +387,56 @@ mailq
 
 ## Webmail infterface
 
+Here we try to install and use `Snappymail` (https://snappymail.eu/)
 
+
+Upgrade PHP to 7.4
+
+```bash
+dnf -y module reset php:7.2 && dnf -y module enable php:7.4
+```
+
+Restart Apache
+```bash
+systemctl restart httpd
+```
+`
+
+Prepare directory and get the package
+
+```bash
+mkdir -p /var/www/lt0x.am/webmail
+```
+```bash
+cd /var/www/lt0x.am/webmail
+```
+
+```bash
+wget --inet4-only https://snappymail.eu/repository/latest.tar.gz
+```
+```bash
+tar -xzf latest.tar.gz
+```
+
+```bash
+rm -f latest.tar.gz
+```
+
+```bash
+find /var/www/lt0x.am/webmail -type d -exec chmod 755 {} \;
+```
+
+```bash
+find /var/www/lt0x.am/webmail -type f -exec chmod 644 {} \;
+```
+
+```bash
+chown -R apache:apache /var/www/lt0x.am/webmail
+```
+
+Now try accessing  `http://apache.lt0x.am/webmail`
+
+You should be able to login with user `tester@lt0x.am`
 
 
 
