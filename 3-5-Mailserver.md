@@ -378,7 +378,7 @@ mailq
 ## Mail client configuration
 
 Make changes in DNS configuration to have additional records for incoming and outgoing servers.<br>
-This helps for Mail client autoconfiguration.
+This helps for **Mail client autoconfiguration**.
 
 * Add `smtp.lt0x.am`  record
 
@@ -478,13 +478,14 @@ You should be able to login with user `tester@lt0x.am`
 You should see incoming messages, <br>
 **but will not be able to send yet**.
 
-We need to enable authorization for sending
-(also ignore use of folders Sent, ... since this is just example installation
-)
+We need to enable authorization for sending.
 
 ```bash
 sed -i 's/"useAuth": false/"useAuth": true/' /var/www/html/webmail/data/_data_/_default_/domains/lt0x.am.json
 ```
+
+
+(Also we might need to manually create folders Sent, ...)
 
 
 ## Mail routing
