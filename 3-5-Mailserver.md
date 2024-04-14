@@ -487,6 +487,9 @@ sed -i 's/"useAuth": false/"useAuth": true/' /var/www/html/webmail/data/_data_/_
 
 (Also we might need to manually create folders Sent, ...)
 
+> NOTE! Production installation requires Admin access configuration according to:
+> https://github.com/the-djmaze/snappymail/wiki/Installation-instructions#now-access-the-admin-page
+> 
 
 ## Mail routing
 
