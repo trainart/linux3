@@ -375,14 +375,41 @@ Check mail queue
 mailq
 ```
 
+## Mail client configuration
 
-> Additionally `thunderbird` graphical Mail Client can be installed either on Windows or Linux
-> `yum -y install thunderbird`
+Make changes in DNS configuration to have additional records for incoming and outgoing servers.
+This helps for Mail client autoconfiguration.
+
+
+* Add two  `A` records
+
+  * name:   `smtp` 
+  * type:   `A` 
+  * value:  `10.10.x.1`
+  
+  * name:   `imap` 
+  * type:   `A` 
+  * value:  `10.10.x.1`
+
+
+Now install and configure `thunderbird` graphical Mail Client. 
+
+```bash
+yum -y install thunderbird
+```
+
+
 >
 >  Portable Windows version is at:
 > `https://portableapps.com/apps/internet/thunderbird_portable`
 >
-> IMPORTANT! When configuring MailClient specify username as `tester` without domainname, since we use Linux users as test users.
+
+
+> IMPORTANT! When configuring MailClient specify username as `tester` without domainname, 
+> since we use Linux users as test users.
+> In production nowadays mailbox users are generally not related to Linux users, 
+> but are created separately in some database, like MySQL.
+
 
 
 ## Webmail infterface
