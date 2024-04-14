@@ -377,7 +377,7 @@ mailq
 
 ## Mail client configuration
 
-Make changes in DNS configuration to have additional records for incoming and outgoing servers.
+Make changes in DNS configuration to have additional records for incoming and outgoing servers.<br>
 This helps for Mail client autoconfiguration.
 
 * Add `smtp.lt0x.am`  record
