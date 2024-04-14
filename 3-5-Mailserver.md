@@ -380,20 +380,19 @@ mailq
 Make changes in DNS configuration to have additional records for incoming and outgoing servers.
 This helps for Mail client autoconfiguration.
 
+* Add `smtp.lt0x.am`  record
 
-* Add two  `A` records
-
-<br>
   * name:   `smtp` 
   * type:   `A` 
   * value:  `10.10.x.1`
 
-<br><br>
+* Add `imap.lt0x.am`  record
+
   * name:   `imap` 
   * type:   `A` 
   * value:  `10.10.x.1`
 
-
+<br><br>
 
 Now install and configure `thunderbird` graphical Mail Client. 
 
