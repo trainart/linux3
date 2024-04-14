@@ -383,13 +383,12 @@ This helps for Mail client autoconfiguration.
 
 * Add two  `A` records
 
-
+<br>
   * name:   `smtp` 
   * type:   `A` 
   * value:  `10.10.x.1`
-  
 
-
+<br><br>
   * name:   `imap` 
   * type:   `A` 
   * value:  `10.10.x.1`
