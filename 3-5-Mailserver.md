@@ -419,7 +419,7 @@ yum -y install thunderbird
 Here we try to install and use `Snappymail` (https://snappymail.eu/)
 
 
-Upgrade PHP to 7.4
+Upgrade PHP to version 7.4
 
 ```bash
 dnf -y module reset php:7.2 && dnf -y module enable php:7.4
@@ -444,6 +444,8 @@ mkdir -p /var/www/lt0x.am/webmail
 cd /var/www/lt0x.am/webmail
 ```
 
+Download and extract Snappymail
+
 ```bash
 wget --inet4-only https://snappymail.eu/repository/latest.tar.gz
 ```
@@ -454,6 +456,8 @@ tar -xzf latest.tar.gz
 ```bash
 rm -f latest.tar.gz
 ```
+
+Set proper permissions
 
 ```bash
 find /var/www/lt0x.am/webmail -type d -exec chmod 755 {} \;
@@ -471,9 +475,13 @@ Now try accessing  `http://apache.lt0x.am/webmail`
 
 You should be able to login with user `tester@lt0x.am`
 
-You should see incoming messages but will not be able to send yet.
-We need to enable Auth for sending
-(also ignore use of folders Sent, ... since this is just example installation)
+You should see incoming messages, <br>
+**but will not be able to send yet**.
+
+We need to enable authorization for sending
+(also ignore use of folders Sent, ... since this is just example installation
+)
+
 ```bash
 sed -i 's/"useAuth": false/"useAuth": true/' /var/www/html/webmail/data/_data_/_default_/domains/lt0x.am.json
 ```
@@ -519,7 +527,10 @@ But it doesn't mean they will be accepted there.
 To have them accepted we need to add some configuration there too.
 
 In order mail for some domain to be accepted by mailserver
-it should either be registered as local domain, or domain to forward mails somewhere.
+it should either be registered as: 
+1. **local domain**, or 
+2. **domain to forward mails somewhere**.
+
 Below we configure the second for student's domains.
 
 ### Configuration of central Hub (Teacher's Server)
