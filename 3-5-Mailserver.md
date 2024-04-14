@@ -383,13 +383,17 @@ This helps for Mail client autoconfiguration.
 
 * Add two  `A` records
 
+
   * name:   `smtp` 
   * type:   `A` 
   * value:  `10.10.x.1`
   
+
+
   * name:   `imap` 
   * type:   `A` 
   * value:  `10.10.x.1`
+
 
 
 Now install and configure `thunderbird` graphical Mail Client. 
