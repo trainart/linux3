@@ -66,6 +66,8 @@ cat  > /etc/dnsmasq.d/dhcp-only.conf  << "EOF1"
 port=0 # don't function as a DNS server
 dhcp-range=192.168.168.2,192.168.168.253,12h
 dhcp-option=1,255.255.255.0 # Subnet Mask
+dhcp-option=3 # Default route
+dhcp-option=6 # DNS server
 #dhcp-option=3,192.168.168.1 # Default route
 #dhcp-option=6,192.168.168.1 # DNS server
 dhcp-option=28,192.168.168.255 # Broadcast address
