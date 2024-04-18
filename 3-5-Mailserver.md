@@ -481,7 +481,7 @@ You should see incoming messages, <br>
 We need to enable authorization for sending.
 
 ```bash
-sed -i 's/"useAuth": false/"useAuth": true/' /var/www/html/webmail/data/_data_/_default_/domains/lt0x.am.json
+sed -i 's/"useAuth": false/"useAuth": true/' /var/www/lt0x.am/webmail/data/_data_/_default_/domains/lt0x.am.json
 ```
 
 
