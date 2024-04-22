@@ -602,7 +602,7 @@ Each student should add new IP address `10.10.x.25` and make changes in DNS conf
 
 * Use `nmtui` to **add** new `10.10.x.25` IP address to second interface `enp0s8`
 
-* **Add** second `MX` record for your domain to point to `bkpmx.lt0x.am`
+* **Add** second `MX` record for your domain to point to `mx25.lt0x.am`
  
   * type:   `MX` 
   * value:  `10 mx25.lt0x.am.`
