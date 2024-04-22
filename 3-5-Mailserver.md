@@ -565,7 +565,7 @@ ENDTEXT
 > forces to send mails directly to that name's IP address  <br>
 > otherwise (if specified without square brackets)  <br>
 > mailserver will try to first make MX check and the send mails to  <br>
-> IP address of host specified in hihgest priority MX record  <br>
+> IP address of host specified in highest priority MX record  <br>
 > 
 
 
