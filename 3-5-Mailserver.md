@@ -5,7 +5,6 @@ _(partially based on https://www.server-world.info/en/note?os=CentOS_8&p=mail&f=
 
 ### How email works (MTA, MDA, MUA)
 
-
 Email is based around the use of electronic mailboxes. 
 When an email is sent, the message is routed from server to server, 
 all the way to the recipient's email server. 
@@ -505,42 +504,46 @@ Mail routing may be organised in two ways:
 
 ### MX configuration to route mails via central Hub (Teacher's Server)
 
-Make changes in DNS configuration 
+
+Teacher should make changes in DNS configuration 
+
+* Add `A` record for it.
+
+  * name:   `mx2` 
+  * type:   `A` 
+  * value:  `10.10.0.111`
+  
+* Add `PTR` record `111.0.10.10.in-addr.arpa.` 
+  `mx2.lt0x.am` PTR record:
+
+  * type:		`PTR`
+  * name:       `111`
+  * value:	    `mx2.lt00.am.`
+
+
+
+Each student should make changes in DNS configuration 
 
 * **Modify** `MX` resource record for your domain to point to `mx2.lt0x.am`
  
   * type:   `MX` 
   * value:  `0 mx2.lt0x.am.`
 
-* Add `A` record for it.
-
-  * name:   `mx2` 
-  * type:   `A` 
-  * value:  `10.10.x.111`
   
-
-Update `PTR` record `111.x.10.10.in-addr.arpa.`
-
-* `mx2.lt0x.am` PTR record:
-
-  * type:		`PTR`
-  * name:       `111`
-  * value:	    `mx2.lt0x.am.`
-
-Now your domain mails will go to Teacher's server.  
+Now your domain mails will try to deliver via Teacher's server.  
 But it doesn't mean they will be accepted there.
-To have them accepted we need to add some configuration there too.
+To have them accepted Teacher needs to add some configuration there too.
 
 In order mail for some domain to be accepted by mailserver
 it should either be registered as: 
 1. **local domain**, or 
 2. **domain to forward mails somewhere**.
 
-Below we configure the second for student's domains.
+Below we configure the second variant for student's domains.
 
 ### Configuration of central Hub (Teacher's Server)
 
-Add following lines to `/etc/postfix/transport`
+Teacher should add following lines to `/etc/postfix/transport`
 
 With contents:
 ```bash
@@ -554,6 +557,15 @@ lt06.am smtp:[mail.lt06.am]:25
 lt07.am smtp:[mail.lt07.am]:25
 ENDTEXT
 ```
+
+> IMPORTANT !  
+> Mentioning mailserver name in square brackets 
+> like `[mail.lt01.am]`
+> forces to send mails directly to that name's IP address
+> otherwise (if specified without square brackets)
+> mailserver will try to first make MX check and the send mails to
+> IP address of host specified in hihgest priority MX record
+> 
 
 
 Build that config
@@ -577,28 +589,32 @@ Restart Postfix
 systemctl restart postfix
 ```
 
-Now try to send mail from one to another
-and check logs where do they go.
+Now:
+* try to send mail from one student to another 
+* and check logs where do they go.
 
 
 ### Second MX as backup
 
-Make changes in DNS configuration 
+Each student should add new IP address `10.10.x.25` and make changes in DNS configuration 
+
+
+* Use `nmtui` to **add** new `10.10.x.25` IP address to second interface `enp0s8`
 
 * **Add** second `MX` record for your domain to point to `bkpmx.lt0x.am`
  
   * type:   `MX` 
-  * value:  `10 bkpmx.lt0x.am.`
+  * value:  `10 mx25.lt0x.am.`
 
 * Add `A` record for it.
 
-  * name:   `bkpmx` 
+  * name:   `mx25` 
   * type:   `A` 
-  * value:  `10.10.x.1`
+  * value:  `10.10.x.25`
   
 
-> NOTE ! We have set lower priority `10`
-> So mail will go here if first server will not respond.
+> NOTE ! We have set lower priority `25`
+> So mail will go here only if first (Teacher's) server will not respond.
 
 Now Teacher will shutdown his postfix.
 and you can try sending mails to another student's domains.
@@ -613,7 +629,7 @@ tail /var/log/postfix.log
 
 ### Configuration of Students servers
 
-Here we will configure your domain mail to route to Teacher's server without MX.
+Here we will configure another variant to route your domain's mail to Teacher's server without MX.
 
 Add following lines to `/etc/postfix/transport`
 
@@ -629,6 +645,13 @@ lt06.am smtp:[mail.lt00.am]:25
 lt07.am smtp:[mail.lt00.am]:25
 ENDTEXT
 ```
+
+> IMPORTANT !
+> Before doing next step
+> **EDIT** above `/etc/postfix/transport` file and remove **YOUR DOMAIN** line
+> 
+> 
+
 
 Build that config
 ```bash
