@@ -645,6 +645,8 @@ tail /var/log/postfix.log
 
 Here we will configure another variant to route your domain's mail to Teacher's server without MX.
 
+Put a `;` before each `MX` line in your domain config to comment out these records.
+
 Add following lines to `/etc/postfix/transport`
 
 With contents:
@@ -709,8 +711,13 @@ Install `pflogsumm` which is the Postfix Log reporting tool.
 yum -y install postfix-perl-scripts
 ```
 
+
 Generate mail log summary for today
+```bash
+perl /usr/sbin/pflogsumm -d today /var/log/maillog | less
+```
+
+Generate mail log summary for whole log file
 ```bash
 pflogsumm -e /var/log/postfix.log | less
 ```
-
