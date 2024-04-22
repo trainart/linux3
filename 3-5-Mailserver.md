@@ -549,13 +549,13 @@ Teacher should add following lines to `/etc/postfix/transport`
 With contents:
 ```bash
 cat >> /etc/postfix/transport << "ENDTEXT"
-lt01.am smtp:[mail.lt01.am]:25
-lt02.am smtp:[mail.lt02.am]:25
-lt03.am smtp:[mail.lt03.am]:25
-lt04.am smtp:[mail.lt04.am]:25
-lt05.am smtp:[mail.lt05.am]:25
-lt06.am smtp:[mail.lt06.am]:25
-lt07.am smtp:[mail.lt07.am]:25
+lt01.am smtp:[lt01.am]:25
+lt02.am smtp:[lt02.am]:25
+lt03.am smtp:[lt03.am]:25
+lt04.am smtp:[lt04.am]:25
+lt05.am smtp:[lt05.am]:25
+lt06.am smtp:[lt06.am]:25
+lt07.am smtp:[lt07.am]:25
 ENDTEXT
 ```
  
@@ -650,13 +650,13 @@ Add following lines to `/etc/postfix/transport`
 With contents:
 ```bash
 cat >> /etc/postfix/transport << "ENDTEXT"
-lt01.am smtp:[mail.lt00.am]:25
-lt02.am smtp:[mail.lt00.am]:25
-lt03.am smtp:[mail.lt00.am]:25
-lt04.am smtp:[mail.lt00.am]:25
-lt05.am smtp:[mail.lt00.am]:25
-lt06.am smtp:[mail.lt00.am]:25
-lt07.am smtp:[mail.lt00.am]:25
+lt01.am smtp:[lt00.am]:25
+lt02.am smtp:[lt00.am]:25
+lt03.am smtp:[lt00.am]:25
+lt04.am smtp:[lt00.am]:25
+lt05.am smtp:[lt00.am]:25
+lt06.am smtp:[lt00.am]:25
+lt07.am smtp:[lt00.am]:25
 ENDTEXT
 ```
 
