@@ -608,7 +608,7 @@ Each student should add new IP address `10.10.x.25` and make changes in DNS conf
   * value:  `10 mx25.lt0x.am.`
 
 
-> NOTE ! We have set lower priority `25`  <br>
+> NOTE ! We have set lower priority `10`  <br>
 > So mail will go here only if first (Teacher's) server will not respond.
 
 
