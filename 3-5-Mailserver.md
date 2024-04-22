@@ -525,10 +525,10 @@ Teacher should make changes in DNS configuration
 
 Each student should make changes in DNS configuration 
 
-* **Modify** `MX` resource record for your domain to point to `mx2.lt0x.am`
+* **Modify** `MX` resource record for your domain to point to `mx2.lt00.am`
  
   * type:   `MX` 
-  * value:  `0 mx2.lt0x.am.`
+  * value:  `0 mx2.lt00.am.`
 
   
 Now your domain mails will try to deliver via Teacher's server.  
