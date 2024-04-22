@@ -5,6 +5,7 @@ _(partially based on https://www.server-world.info/en/note?os=CentOS_8&p=mail&f=
 
 ### How email works (MTA, MDA, MUA)
 
+
 Email is based around the use of electronic mailboxes. 
 When an email is sent, the message is routed from server to server, 
 all the way to the recipient's email server. 
