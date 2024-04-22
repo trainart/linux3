@@ -496,7 +496,8 @@ sed -i 's/"useAuth": false/"useAuth": true/' /var/www/lt0x.am/webmail/data/_data
 Mail routing may be organised in two ways:
 
 * Public MX-based routing
-  * to specify destination of mails coming from the world to **our domain**. 
+  * to specify destination of mails coming from the world to **our domain**.
+  <br>
 * Internal static forwarding to another mailserver
   * to forward mails from one server to another 
   * may be used for both **our domain** and **other domains**
@@ -557,14 +558,14 @@ lt06.am smtp:[mail.lt06.am]:25
 lt07.am smtp:[mail.lt07.am]:25
 ENDTEXT
 ```
-
-> IMPORTANT !  
-> Mentioning mailserver name in square brackets 
-> like `[mail.lt01.am]`
-> forces to send mails directly to that name's IP address
-> otherwise (if specified without square brackets)
-> mailserver will try to first make MX check and the send mails to
-> IP address of host specified in hihgest priority MX record
+ 
+> IMPORTANT !   <br>
+> Mentioning mailserver name in square brackets   <br>
+> like `[mail.lt01.am]`  <br>
+> forces to send mails directly to that name's IP address  <br>
+> otherwise (if specified without square brackets)  <br>
+> mailserver will try to first make MX check and the send mails to  <br>
+> IP address of host specified in hihgest priority MX record  <br>
 > 
 
 
@@ -613,7 +614,7 @@ Each student should add new IP address `10.10.x.25` and make changes in DNS conf
   * value:  `10.10.x.25`
   
 
-> NOTE ! We have set lower priority `25`
+> NOTE ! We have set lower priority `25`  <br>
 > So mail will go here only if first (Teacher's) server will not respond.
 
 Now Teacher will shutdown his postfix.
@@ -646,9 +647,9 @@ lt07.am smtp:[mail.lt00.am]:25
 ENDTEXT
 ```
 
-> IMPORTANT !
-> Before doing next step
-> **EDIT** above `/etc/postfix/transport` file and remove **YOUR DOMAIN** line
+> IMPORTANT ! <br>
+> Before doing next step <br>
+> **EDIT** above `/etc/postfix/transport` file and remove **YOUR DOMAIN** line <br>
 > 
 > 
 
