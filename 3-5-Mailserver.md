@@ -607,6 +607,11 @@ Each student should add new IP address `10.10.x.25` and make changes in DNS conf
   * type:   `MX` 
   * value:  `10 mx25.lt0x.am.`
 
+
+> NOTE ! We have set lower priority `25`  <br>
+> So mail will go here only if first (Teacher's) server will not respond.
+
+
 * Add `A` record for it.
 
   * name:   `mx25` 
@@ -614,15 +619,16 @@ Each student should add new IP address `10.10.x.25` and make changes in DNS conf
   * value:  `10.10.x.25`
   
 
-* Add `PTR` record `25.x.10.10.in-addr.arpa.` 
+* Add `PTR` record `25.x.10.10.in-addr.arpa.` <br>
   `mx25.lt0x.am` PTR record:
 
   * type:		`PTR`
   * name:       `25`
   * value:	    `mx25.lt0x.am.`
 
-> NOTE ! We have set lower priority `25`  <br>
-> So mail will go here only if first (Teacher's) server will not respond.
+> NOTE ! `PTR` record is not needed for our configuration, <br>
+> but in production config it is required !
+
 
 Now Teacher will shutdown his postfix.
 and you can try sending mails to another student's domains.
