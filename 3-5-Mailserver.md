@@ -714,7 +714,7 @@ yum -y install postfix-perl-scripts
 
 Generate mail log summary for today
 ```bash
-perl /usr/sbin/pflogsumm -d today /var/log/maillog | less
+pflogsumm -d today -e /var/log/maillog | less
 ```
 
 Generate mail log summary for whole log file
