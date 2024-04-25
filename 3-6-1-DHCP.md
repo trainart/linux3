@@ -43,9 +43,9 @@ Restart rsyslog:
 systemctl restart rsyslog
 ```
 
-Restart dnsmasq:
+Start & enable dnsmasq service to start on each boot
 ```bash
-systemctl restart dnsmasq 
+systemctl enable --now dnsmasq
 ```
 
 Check
@@ -87,11 +87,10 @@ EOF1
 > "6" means "DNS server" 
 > "28" means "Broadcast address"
 
-Start & enable dnsmasq service to start on each boot
+Restart dnsmasq:
 ```bash
-systemctl enable --now dnsmasq
+systemctl restart dnsmasq 
 ```
-
 
 Now on another server configure `enp0s9` to get interface settings automatically via DHCP.
 
