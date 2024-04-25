@@ -4,14 +4,14 @@
 
 Dnsmasq is the lightweight DNS forwarder and DHCP Server Software
 
-> In order to test it in VM environment create additional "Host-Only" network interface
+> In order to test it in VM environment create additional "Internal Network" network interface
 > and configure DHCP server to work on it only 
 
 #### Create new separate interface for DHCP testing
 
 Since we can't have multiple DHCP servers in a single network we need separate environment for that.
 
-In VirtualBox config add new network device and assign "Host-only Adapter"
+In VirtualBox config add new network device and assign "Internal Network"
 After booting that interface will get `enp0s9` name.
 
 > You will also need second VM with same additional interface as Client.
