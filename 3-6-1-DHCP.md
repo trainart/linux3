@@ -71,7 +71,6 @@ dhcp-option=6 # DNS server
 #dhcp-option=3,192.168.168.1 # Default route
 #dhcp-option=6,192.168.168.1 # DNS server
 dhcp-option=28,192.168.168.255 # Broadcast address
-default-lease-time=600
 log-dhcp # Log DHCP transactions
 interface=lo
 interface=enp0s9
@@ -90,6 +89,12 @@ EOF1
 Restart dnsmasq:
 ```bash
 systemctl restart dnsmasq 
+```
+
+Check
+
+```bash
+tail /var/log/dnsmasq.log
 ```
 
 Now on another server configure `enp0s9` to get interface settings automatically via DHCP.
