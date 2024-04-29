@@ -283,6 +283,41 @@ Check
 tail /var/log/dovecot.log
 ```
 
+#### Add Logrotate config for Postfix & Dovecot
+
+
+```bash
+cat > /etc/logrotate.d/postfix << "ENDTEXT"
+/var/log/postfix.log {
+    rotate 24
+    monthly
+    compress
+    delaycompress
+    postrotate
+        /bin/systemctl reload postfix  
+    endscript
+}
+ENDTEXT
+```
+
+
+
+```bash
+cat > /etc/logrotate.d/dovecot << "ENDTEXT"
+/var/log/dovecot.log {
+    rotate 24
+    monthly
+    compress
+    delaycompress
+    postrotate
+        /bin/systemctl reload dovecot  
+    endscript
+}
+ENDTEXT
+```
+
+
+
 #### SMTP Session example
 Try following example
 
