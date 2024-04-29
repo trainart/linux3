@@ -316,6 +316,8 @@ cat > /etc/logrotate.d/dovecot << "ENDTEXT"
 ENDTEXT
 ```
 
+No restart is needed, since `logrotate` is not a service, but is run by `cron` 
+as `/etc/cron.daily/logrotate` daily run script.
 
 
 #### SMTP Session example
