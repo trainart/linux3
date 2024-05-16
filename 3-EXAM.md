@@ -1,8 +1,10 @@
 # Linux Network Server (level 3) EXAM
 
-## Install following service on separate VM and present as your EXAM result
+## Install following services on separate VM and present as your EXAM result
 
 ### Before you start with exam task on new VM 
+
+0. Add second network interface to your VM it should become `enp0s8`.
 
 1. Since `SELinux` and `firewalld` may cause problems for this exam task
 turn off firewalld & SELinux
@@ -16,9 +18,7 @@ turn off firewalld & SELinux
    Set proper VM **hostname** according to your group domain.
 
 
-###  Network configuration
-
-Add second network interface to your VM. 
+3. Network configuration
 Use 'nmtui' to assign static IPs to second interface `enp0s8`
 
 * `10.10.x.1/24`
