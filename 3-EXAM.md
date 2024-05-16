@@ -101,7 +101,7 @@ curl -v  http://nginx.l3exam0x.am/ | grep NGINX >> /tmp/l3exam0x-nginx.out
         |                     |                      |
         |10.10.x.10:80        |10.10.x.100:80        |10.10.x.200:80
 +-------+--------+   +--------+---------+   +--------+---------+
-| [ ha.lt0x.am ] |   | [apache.lt0x.am] |   | [ nginx.lt0x.am] |
+| [ ha.l3exam0x.am ] |   | [apache.l3exam0x.am] |   | [ nginx.l3exam0x.am] |
 |     HAProxy    |   | Apache Server #1 |   |  Nginx Server#2  |
 +----------------+   +------------------+   +------------------+
 
