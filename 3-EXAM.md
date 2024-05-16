@@ -20,10 +20,11 @@ turn off firewalld & SELinux
 
 Add second network interface to your VM. 
 Use 'nmtui' to assign static IPs to second interface `enp0s8`
-`10.10.x.1/24`
-`10.10.x.100/32`
-`10.10.x.200/32`
-`10.10.x.10/32`
+
+* `10.10.x.1/24`
+* `10.10.x.100/32`
+* `10.10.x.200/32`
+* `10.10.x.10/32`
 
 
 ###  DNS Server
@@ -36,12 +37,12 @@ Use 'nmtui' to assign static IPs to second interface `enp0s8`
      with following records
    * `l3exam0x.am` NS ns.l3exam0x.am
    * `l3exam0x.am` MX 0 mail
-   * `ns.l3exam0x.am` A 10.10.1.1
-   * `www.l3exam0x.am` A 10.10.1.1
-   * `mail.l3exam0x.am` A 10.10.1.1
-   * `apache.l3exam0x.am` A 10.10.1.100
-   * `nginx.l3exam0x.am` A 10.10.1.200
-   * `ha.l3exam0x.am` A 10.10.1.10
+   * `ns.l3exam0x.am` A 10.10.x.1
+   * `www.l3exam0x.am` A 10.10.x.1
+   * `mail.l3exam0x.am` A 10.10.x.1
+   * `apache.l3exam0x.am` A 10.10.x.100
+   * `nginx.l3exam0x.am` A 10.10.x.200
+   * `ha.l3exam0x.am` A 10.10.x.10
    
 
 4. Configure static resolver to 127.0.0.1
