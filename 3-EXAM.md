@@ -27,7 +27,7 @@ Use 'nmtui' to assign static IPs to second interface `enp0s8`
 * `10.10.x.10/32`
 
 
-###  DNS Server
+### Install and configure DNS Server
 
 1. Install and configure chrooted BIND DNS Server
 2. Configure bind-chroot to 
@@ -122,7 +122,7 @@ curl -s http://ha.l3exam0x.am/ | grep -E '(APACHE|NGINX)' >> /tmp/l3exam0x-hapro
 
 ```
 
-### Squid 
+### Install and configure Squid 
 
 1. Install Squid
 2. Hide HTTP headers that reveal you are behind the proxy
