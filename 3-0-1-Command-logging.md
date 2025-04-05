@@ -8,7 +8,7 @@ Below solution can help to keep track of commands that users run.
 
 Try this
 ```bash
-PROMPT_COMMAND='echo -n "DATE is: " && date'
+PROMPT_COMMAND='echo; echo -n "DATE is: " && date; echo '
 ```
 
 Now run any commands. You will see the above echo runs before each command.
