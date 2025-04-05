@@ -90,7 +90,7 @@ Now run to check it works for your current user only.
 Add it to the ~/.bashrc file
 
 ```bash
-echo ""~/cmdlog.sh" >> ~/.bashrc
+echo "~/cmdlog.sh" >> ~/.bashrc
 
 ```
 
