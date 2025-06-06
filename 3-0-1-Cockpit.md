@@ -1,4 +1,4 @@
-# Linux Network Server (level 3) <br /> Linux ցանցային սերվեր (փուլ 3)
+# Linux Network Server (level 3) <br /> Լինուքս ցանցային սերվեր (փուլ 3)
 
 
 ## Cockpit 

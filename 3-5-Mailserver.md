@@ -1,4 +1,4 @@
-# Linux Network Server (level 3) <br /> Linux ցանցային սերվեր (փուլ 3)
+# Linux Network Server (level 3) <br /> Լինուքս ցանցային սերվեր (փուլ 3)
 
 ## Email service, Mail server (Postfix, Dovecot)
 _(partially based on https://www.server-world.info/en/note?os=CentOS_8&p=mail&f=1)_

@@ -1,4 +1,4 @@
-# Linux Administration and Networking Basics (level 2) <br /> Linux-ի կառավարում և ցանցային հիմունքներ (փուլ 2)
+# Linux Network Server (level 3) <br /> Լինուքս ցանցային սերվեր (փուլ 3)
 
 ## SSH
 
