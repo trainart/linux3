@@ -1,6 +1,118 @@
 # Linux Network Server (level 3) <br /> Լինուքս ցանցային սերվեր (փուլ 3)
 
-## SSH
+## SSH Advanced
+
+
+### Restricting key-based SSH access to particular IP addresses
+
+Rather than just storing the public keys of connecting users 
+`~/.ssh/authorized_keys` file also allows to 
+specify some additional configuration entries for each key:
+
+
+
+> Options are comma-separated and are documented in the `man sshd`, 
+> under the section `"AUTHORIZED_KEYS FILE FORMAT"`. 
+> 
+> Here are the most useful ones:
+> 
+> * **from="<hostname/ip>"**  _- Prepending from="*.example.com" to the key line would only allow public-key authenticated login if the connection was coming from some host with a reverse DNS of example.com. You can also put IP addresses in here. This is particularly useful for setting up automated processes through keys with null passphrases._
+>
+>> ```bash
+>> * - Matches zero or more characters
+>> ? - Matches exactly one character
+>> ! - Negates the host pattern match
+>> ```
+>
+> * **command="<command>"**  _- Means that once authenticated, the command specified is run, and the connection is closed. Again, this is useful in automated setups for running only a certain script on successful authentication, and nothing else._
+> 
+> 
+> * **no-agent-forwarding**  _- Prevents the key user from forwarding authentication requests 
+> to an SSH agent on their client, using the -A or ForwardAgent option to ssh._
+>
+> 
+> * **no-port-forwarding** - _Prevents the key user from forwarding ports using -L and -R._
+>
+> 
+> * **no-X11-forwarding**  - _Prevents the key user from forwarding X11 processes._
+>
+> 
+> * **no-pty** - _Prevents the key user from being allocated a tty device at all (does not allow interactive login)_
+>    
+
+#### PRACTICE 1
+
+Add to your following to the line of you public key, before "**ssh-rsa ...**" 
+in `~/.ssh/authorized_keys` file: 
+
+```bash
+from="127.0.0.1,10.1.10.*",command="w" ssh-rsa ...
+```
+
+Now try connecting:  
+* from allowed IP address
+
+You will get `w` command output
+* from other IP address
+
+You will get password prompt
+
+Such restriction can be useful for remote backups scripts, 
+as it can ensure that your remote user can only execute the 
+expected command - and not anything else.
+
+> Another useful restrictions are, to disable use of agent-forwarding, port-forwarding, X11 and interactive logins.
+> 
+> >  ```bash
+> > no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty ssh-rsa ...
+> > ```
+> 
+> Recent OpenSSH versions >=7.2 have additional option `restrict` in the `authorized_keys`.
+> It enables all restrictions, i.e. disable the above altogether. Also any future restriction capabilities are added to this option.
+> 
+
+#### BONUS
+
+`command=` option is not supporting arguments.
+Solution is in creating additional intermediate script like one below. 
+
+1. Create file `/opt/checkssh` and make it executable.
+
+```bash
+#!/bin/bash
+if [ -n "$SSH_ORIGINAL_COMMAND" ]; then
+    if [[ "$SSH_ORIGINAL_COMMAND" =~ ^ls\  ]]; then
+        echo "`/bin/date`: $SSH_ORIGINAL_COMMAND" >> $HOME/ssh-command-log
+        exec $SSH_ORIGINAL_COMMAND
+    else
+        echo "`/bin/date`: DENIED $SSH_ORIGINAL_COMMAND" >> $HOME/ssh-command-log
+    fi
+fi
+```
+> NOTE: Allowed **ls** command in the above script specifically ends with `\ `, 
+> which means, there should be a space after the command (for options/arguments):
+> 
+> `^ls\ `
+> 
+
+`chmod +x /opt/checkssh`
+
+2. Modify `~/.ssh/authorized_keys` file:
+```bash
+from="127.0.0.1,10.1.10.*",command="/opt/checkssh" ssh-rsa ...
+```
+
+3. Try run 
+
+`ssh student@127.0.0.1 ls /opt`
+
+`ssh student@127.0.0.1 ls -l /tmp`
+
+The same way other restricted commands can be specified (like `rsync`, discussed below).  
+
+
+
+
 
 
 ### SSH as a filesystem: sshfs
