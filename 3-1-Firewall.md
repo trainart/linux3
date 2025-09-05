@@ -450,7 +450,7 @@ To clear/drop all current rules in NAT table specify table name with `-t`
 iptables -F -t nat
 ```
 
-#### Nftables
+### Nftables
 
 The `nftables` is developed by **Netfilter**, the same organization that currently maintains `iptables`. 
 It was created as a better variant than `iptables` and is very similar to it.
@@ -496,7 +496,7 @@ The service itself only manages its configuration, not the filter itself.
 
 Even more the rules you set with `netfilter` and `iptables` are to some extent managable by another tool.
 
-##### Syntax difference between iptables and nftables
+#### Syntax difference between iptables and nftables
 The syntax of `nftables` is different than syntax of `iptables`.
 
 But there is `iptables-translate` utility, which will accept `iptables` options and convert them to the `nftables` equivalent. 
@@ -567,16 +567,115 @@ More info:
 * https://www.server-world.info/en/note?os=Ubuntu_22.04&p=nftables&f=2
 
 
-#### Firewalld
+### Firewalld
 
-**firewalld** is a zone-based firewall.
+For Red Hat-based systems (including AlmaLinux, Rocky Linux), 
+the recommended and simplest tool is **firewalld**, which manages the firewalld service.
 
-Each zone contains several actions, based on set of defined rules. 
-Rules are applied against incoming/outgoing packets.
+**firewalld** is a dynamic firewall manager that uses either `iptables` or `nftables` as its backend. 
 
-Zone is associated with at least one network interface.
+It provides a higher-level, more user-friendly interface 
+with concepts like **Zones** and **Services**.
 
-Firewalld Basic Operation is available at:
+
+#### Understanding the Basics: Zones
+
+**firewalld** uses **Zones** to manage the trust level of your network connections. 
+Think of a zone as a **security profile**.
+
+* public: The default zone for new connections. Untrusted. Other computers on the network are not trusted. Perfect for a server.
+* internal: For the internal network. Other computers are generally trusted.
+* trusted: All network connections are accepted. (Use sparingly!)
+
+A network interface (like `enp0s3` or `ens192`) is assigned to a zone.
+
+#### Understanding the Basics: Services
+
+Instead of remembering port numbers, firewalld uses **Services**. 
+A service is a **predefined set of ports and protocols**.
+
+Examples:
+
+* ssh: Port 22 (for remote administration)
+* http: Port 80 (for unencrypted web traffic)
+* https: Port 443 (for encrypted web traffic)
+* cockpit: Port 9090 (for the web-based management tool)
+
+
+##### PRACTICE
+
+Main command is `firewall-cmd`
+
+Examples:
+
+Check the status:
+
+```bash
+sudo firewall-cmd --state
+```
+
+> This should simply return 'running'. 
+> If it doesn't, start it with:
+> `sudo systemctl start firewalld`
+
+List everything (zones, services, active rules)
+
+```bash
+sudo firewall-cmd --list-all
+```
+
+See the **default zone** and which interfaces are using it
+
+```bash
+sudo firewall-cmd --get-default-zone
+```
+
+See all zones and what interfaces they are assigned to
+
+```bash
+sudo firewall-cmd --get-active-zones
+```
+
+Check what services are currently allowed in the default zone (public)
+
+```bash
+sudo firewall-cmd --list-services
+```
+
+Permanently allow the HTTP service
+
+```bash
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --reload
+```
+
+> The  `--permanent` flag means the rule survives a reboot.
+> However, rules with `--permanent` are **NOT** active immediately.
+> That is why we give the second `reload` to activate the permanent rule
+
+# Now verify the service was added
+```bash
+sudo firewall-cmd --list-services
+```
+
+Open a custom port (e.g., 8080/TCP)
+
+```bash
+sudo firewall-cmd --permanent --add-port=8080/tcp
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-services
+```
+
+
+# Remove the port rule
+```bash
+sudo firewall-cmd --permanent --remove-port=8080/tcp
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-services
+```
+
+
+#### More on Firewalld at:
 
 * https://www.redhat.com/sysadmin/beginners-guide-firewalld
 * https://access.redhat.com/documentation/ru-ru/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/using-and-configuring-firewalld_configuring-and-managing-networking
@@ -585,7 +684,8 @@ Firewalld Basic Operation is available at:
 * https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-using-firewalld-on-centos-8-ru
 
 
-#### UFW
+
+### UFW
 
 UFW is also the frontend tool of nftables/iptables for Debian/Ubuntu.
 
