@@ -76,7 +76,7 @@ we need to permanently enable IP forwarding there.
 Add config parameter:
 
 ```bash
-echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf 
+echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf 
 ```
 
 Activate the change:
@@ -160,10 +160,26 @@ Below we configure Linux not to accept it to have clear model of our routing.
 (This is required only for our training, not for production, because here we put many subnets in same network).
 
 ```bash
-echo "net.ipv4.conf.enp0s8.accept_redirects=0" | sudo tee -a /etc/sysctl.conf
-echo "net.ipv4.conf.enp0s8.send_redirects=0" | sudo tee -a /etc/sysctl.conf
+echo "net.ipv4.conf.enp0s8.accept_redirects=0" >> /etc/sysctl.conf
+```
+
+```bash
+echo "net.ipv4.conf.enp0s8.send_redirects=0" | tee -a /etc/sysctl.conf
+```
+
+> NOTE! 
+> In the above 2 commands the same thing is done in 2 ways.
+> On seconde line instead of `>>` we used `| tee -a`
+> Difference is that `tee` command will also show the same in the terminal.
+> You should not see first line output, but should see the second one.
+> So this way is more visual, than `>>`
+
+Now let's permanently apply changes.
+
+```bash
 sysctl -p
 ```
+
 
 ## Test whole config 
 
