@@ -18,7 +18,9 @@ For Level 3 we will need to have the environment like follows:
 </pre>
 
 
-### Second network interface
+## Second network interface
+
+Both Teacher and students should do this section.
 
 * Create second network interface in VM (with same parameters as the first one).
   * Set 
@@ -27,19 +29,81 @@ For Level 3 we will need to have the environment like follows:
   * Start VM
     * After booting it will get the interface name **[enp0s8]**
 
-* Teacher will tell each student the number in the list. 
-  Use that number for you below instead of `x`
 
-### Set your hostname to "lt0x.am"
+  
+## TEACHER's Config (**Students do not need to do this section **, it is provided just for information)
+
+#### Show current state:
 
 ```bash
-nmcli general hostname lt0x.am
+nmcli connection show
 ```
 
-> The same can be done with `hostnamectl set-hostname lt0x.am`
+### Configure necessary parameters
+
+```bash
+nmcli connection modify "Wired connection 1" connection.id enp0s8 ;\
+nmcli connection modify enp0s8 ipv4.method manual ipv4.addresses 10.10.0.1/24,10.10.1.111/24,10.10.2.111/24,10.10.3.111/24,10.10.4.111/24,10.10.5.111/24,10.10.6.111/24,10.10.7.111/24,10.10.8.111/24,10.10.9.111/24,10.10.10.111/24,10.10.11.111/24,10.12.8.111/24,10.10.13.111/24,10.10.14.111/24,10.10.15.111/24 connection.autoconnect yes ;\
+nmcli connection down enp0s8 ;\
+nmcli connection up enp0s8 ;\
+nmcli general hostname lt00.am
+```
+
+As a result Teacher will have `10.10.0.1` IP address for himself
+and at the same time will have `10.10.x.111` address for each student's subnet,
+as presented on the above chart.
+
+### Check result
+
+Check IP address config
+
+```bash
+ip a
+```
+
+Check route config
+
+```bash
+ip r
+```
+
+### Permanently enable IP forwarding
+
+Because according to our network configuration only Teacher's Linux system will act as router, 
+we need to permanently enable IP forwarding there.
+(**Students do not need to do this**, because their Linuxes act as an end host, not a router).
+
+Add config parameter:
+
+```bash
+echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf 
+```
+
+Activate the change:
+
+```bash
+sysctl -p 
+```
+
+Check it's now enabled:
+
+```bash
+cat /proc/sys/net/ipv4/ip_forward
+```
+
+> For security reasons on production Linux systems IP forwarding is to be enabled only it is actually required.
+> Keeping it disabled (0) is the default and more secure for most Linux use cases.
+> We do this here on Teacher's Linux system only for this training purposes !
+
+
+## STUDENT's Config
+
+Teacher will tell each student the number in the list. 
+Use that number for you below instead of `x`.
+
 
 ### Configure static IP `10.10.x.1/24` on **[enp0s8]** interface.
-  Instead on "**nmtui**" we can use "**nmcli**"
+Instead on "**nmtui**" we can use "**nmcli**"
 
 
 #### Show current state:
@@ -77,52 +141,90 @@ Type <Tab><Tab> to see files in that directory
 cat /etc/NetworkManager/system-connections/
 ```
 
-> All the above can be done with "**nmtui**" interactive interface
-
-
-#### TEACHER CONFIG (**Students do not need to do this**)
-
+### Set your hostname to "lt0x.am"
 
 ```bash
-nmcli connection modify "Wired connection 1" connection.id enp0s8
-nmcli connection modify enp0s8 ipv4.method manual ipv4.addresses 10.10.0.1/24,10.10.1.111/24,10.10.2.111/24,10.10.3.111/24,10.10.4.111/24,10.10.5.111/24,10.10.6.111/24,10.10.7.111/24,10.10.8.111/24,10.10.9.111/24,10.10.10.111/24,10.10.11.111/24,10.12.8.111/24,10.10.13.111/24,10.10.14.111/24,10.10.15.111/24 connection.autoconnect yes
-nmcli connection down enp0s8 ; nmcli connection up enp0s8
+nmcli general hostname lt0x.am
 ```
 
-As a result Teacher will have `10.10.0.1` IP address for himself
-and at the same time will have `10.10.x.111` address for each student's subnet,
-as presented on the above chart.
-
-### Check that everyting works
+> The same can be done with `hostnamectl set-hostname lt0x.am`
 
 
-#### Check your IP address config
+> All the above can also be done with "**nmtui**" interactive tool.
+
+
+### Disable ICMP redirects for `enp0s8` interface
+
+In TCP/IP (inside Linux Kernel) ICMP redirects are used to inform hosts of a "better" next-hop route.
+Below we configure Linux not to accept it to have clear model of our routing.
+(This is required only for our training, not for production, because here we put many subnets in same network).
 
 ```bash
-ip a
+echo "net.ipv4.conf.enp0s8.accept_redirects=0" | sudo tee -a /etc/sysctl.conf
+echo "net.ipv4.conf.enp0s8.send_redirects=0" | sudo tee -a /etc/sysctl.conf
+sysctl -p
 ```
 
-#### Check your route config
+## Test whole config 
 
-```bash
-ip r
-```
-
-#### Try pinging Teacher's IP in your subnet
+Students can check connection to teacher's Linux by pinging teacher's IP in student's subnet.
 
 ```bash
 ping 10.10.x.111
 ```
 
-#### Try pinging IP in Teacher's subnet
+Or pinging IP in Teacher's subnet
 
 ```bash
 ping 10.10.0.1
 ```
 
+Both should work for all students.
 
-#### Try pinging IP in some other Student's subnet
+
+Teacher can check all student's IP's
 
 ```bash
-ping 10.10.5.1
+yum -y install fping
 ```
+
+```bash
+fping -c3 -aq 10.10.{1..15}.1
+```
+
+
+Now student's can try pinging each other's IPs 
+(pinging IP in some other student's subnet)
+
+```bash
+ping 10.10.1.1
+```
+
+It should also work.
+Keep that ping till the teacher will run following:
+
+```bash
+echo 0 > /proc/sys/net/ipv4/ip_forward
+```
+
+Ping should stop. Why ?
+
+After teacher will run following, ping should work again:
+
+```bash
+echo 1 > /proc/sys/net/ipv4/ip_forward
+```
+
+You can also try tracing the path
+
+```bash
+yum -y install mtr 
+```
+
+
+```bash
+mtr 10.10.1.1
+```
+
+Now our Network Setup should be complete !
+
