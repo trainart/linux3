@@ -18,8 +18,14 @@ For Level 3 we will need to have the environment like follows:
 </pre>
 
 
-### Create second network interface in VM. 
-  After booting it will get the interface name **[enp0s8]**
+### Second network interface
+
+* Create second network interface in VM (with same parameters as the first one).
+  * Set 
+    * **Attached to** - "**_Bridged Adapter_**"
+    * **Adapter Type** - "**_Paravirtualized Network (virtio-net)_**"
+  * Start VM
+    * After booting it will get the interface name **[enp0s8]**
 
 * Teacher will tell each student the number in the list. 
   Use that number for you below instead of `x`

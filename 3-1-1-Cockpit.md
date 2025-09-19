@@ -29,13 +29,6 @@ firewall-cmd --reload
 
 ```
 
-For Ubuntu/Debian you can run
-```bash
-apt update ;\
-apt -y install cockpit
-
-```
-
 
 That's it. 
 Now check Cockpit is there
