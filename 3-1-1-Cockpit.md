@@ -55,6 +55,12 @@ ip -4 -o a | grep -v '127.0.0.1' | awk '{print $4}' | awk -F'/' '{print $1}' | s
 While opening the URL, remember that you ignore browser's security warning, since the SSL certificate is self-signed.
 
 
+### Try Cockpit
 
+* Try login to Cockpit interface with `student`
+
+* Click the above `Administrative access` button to switch to Admin privileges.
+
+* Try several admin functions from the left menu.
 
 
