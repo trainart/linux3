@@ -29,17 +29,27 @@ firewall-cmd --reload
 
 ```
 
-
 That's it. 
-Now check Cockpit is there
+Cockpit should listen port `9090`.
+Check it:
 
 ```bash
-ss -nlpt ; grep 9090
+ss -nlpt | grep 9090
 
 ```
 
-And if so, try access with web browser:
-(you need to ignore security warning, since the SSL certificate is self-signed)
+If you see that, you can now try to access Cockpit with the web browser.
+You should access URL like **https://[ipaddress]:9090**
 
-`https://[ipaddress]:9090`
+Let us get that URL with following command.
+
+```bash
+ip -4 -o a | grep -v '127.0.0.1' | awk '{print $4}' | awk -F'/' '{print $1}' | sed 's/.*/https:\/\/&:9090/'
+```
+
+While opening the URL, remember that you ignore browser's security warning, since the SSL certificate is self-signed.
+
+
+
+
 
