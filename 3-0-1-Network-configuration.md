@@ -33,7 +33,7 @@ Both Teacher and students should do this section.
   
 ## TEACHER's Config (**Students do not need to do this section **, it is provided just for information)
 
-#### Show current state:
+### Show current state
 
 ```bash
 nmcli connection show
@@ -106,7 +106,7 @@ Use that number for you below instead of `x`.
 Instead on "**nmtui**" we can use "**nmcli**"
 
 
-#### Show current state:
+#### Show current state
 
 ```bash
 nmcli connection show
