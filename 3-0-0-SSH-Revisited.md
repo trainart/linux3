@@ -63,26 +63,26 @@ Run below command as `student`
 Enter password last time. After that you should be able to login without password
 
 ```bash
-ssh-copy-id student{1-15}@[trainer IP]
+ssh-copy-id student{1-15}@10.10.x.111
 ```
 
 Now try to login - you should be able to login without password
 
 ```bash
-ssh student{1-15}@[trainer IP]
+ssh student{1-15}@10.10.x.111
 ```
 
 
-Trainer should do
+Trainer should do 
 
 ```bash
-ssh-copy-id trainer@[each student IP]
+ssh-copy-id trainer@10.10.x.1
 ```
 
 After that trainer should be able to login without password
 
 ```bash
-ssh trainer@[each student IP]
+ssh trainer@10.10.x.1
 ```
 
 ### Restricting key-based SSH access to particular command
@@ -164,46 +164,20 @@ There are other useful options.
 
 #### PRACTICE
 
-Add `from=127.0.0.1` to the line of trainer public key, before "**ssh-rsa ...**" 
+Add `from=10.10.x.111` to the line of trainer public key, before "**ssh-rsa ...**" 
 in `/home/trainer/.ssh/authorized_keys` file: 
 
 the line should look like
 
 ```bash
-from=127.0.0.1,command="htop" ssh-rsa ...
+from=10.10.x.111,command="htop" ssh-rsa ...
 ```
 
-Check 
+Trainer should be able to connect to your host
 
 ```bash
-cat /home/trainer/.ssh/authorized_keys
+trainer@10.10.x.1
 ```
-
-Now try connecting:  
-* from allowed IP address (127.0.0.1)
-
-```bash
-trainer@127.0.0.1 
-```
-
-You will get `htop` command output
-
-* trainer trying from other IP address
-
-Should not be able to login without password
-
-
-Now edit `/home/trainer/.ssh/authorized_keys` again and add trainer's IP address
-
-
-the line should look like
-
-```bash
-from="127.0.0.1,[TRAINER IP]",command="htop" ssh-rsa ...
-```
-
-Now trainer should be able to login
-
 
 #### Restrict most options with `restrict`
 
@@ -212,13 +186,17 @@ Now edit `/home/trainer/.ssh/authorized_keys` again and add `restrict` option in
 the line should look like
 
 ```bash
-restrict,from="127.0.0.1,[TRAINER IP]",command="htop" ssh-rsa ...
+restrict,from="10.10.x.111",command="htop" ssh-rsa ...
 ```
 
 Now trainer should not be able to login with public key.
 
 Why ?
 
+> HINT: 
+> Try replacing the command `htop` with `id`. 
+> See if it will work
+> Try to explain
 
 
 ### Resume
