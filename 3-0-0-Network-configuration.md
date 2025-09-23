@@ -13,14 +13,14 @@ For Level 3 we will need to have the environment like follows:
         | 10.10.x.111         |                  |
 +-------+--------+      +-----+-----+      +-----+-----+
 |     lt00.am    |      |  lt01.am  |      |  lt02.am  |
-|     Teacher    |      | Student 1 |      | Student 2 |
+|     Trainer    |      | Student 1 |      | Student 2 |
 +----------------+      +-----------+      +-----------+
 </pre>
 
 
 ## Second network interface
 
-Both Teacher and students should do this section.
+Both trainer and students should do this section.
 
 * Create second network interface in VM (with same parameters as the first one).
   * Set 
@@ -31,7 +31,7 @@ Both Teacher and students should do this section.
 
 
   
-## TEACHER's Config (**Students do not need to do this section **, it is provided just for information)
+## Trainer's Config (**Students do not need to do this section **, it is provided just for information)
 
 ### Show current state
 
@@ -49,7 +49,7 @@ nmcli connection up enp0s8 ;\
 nmcli general hostname lt00.am
 ```
 
-As a result Teacher will have `10.10.0.1` IP address for himself
+As a result trainer will have `10.10.0.1` IP address for himself
 and at the same time will have `10.10.x.111` address for each student's subnet,
 as presented on the above chart.
 
@@ -69,7 +69,7 @@ ip r
 
 ### Permanently enable IP forwarding
 
-Because according to our network configuration only Teacher's Linux system will act as router, 
+Because according to our network configuration only trainer's Linux system will act as router, 
 we need to permanently enable IP forwarding there.
 (**Students do not need to do this**, because their Linuxes act as an end host, not a router).
 
@@ -93,12 +93,12 @@ cat /proc/sys/net/ipv4/ip_forward
 
 > For security reasons on production Linux systems IP forwarding is to be enabled only it is actually required.
 > Keeping it disabled (0) is the default and more secure for most Linux use cases.
-> We do this here on Teacher's Linux system only for this training purposes !
+> We do this here on trainer's Linux system only for this training purposes !
 
 
 ## STUDENT's Config
 
-Teacher will tell each student the number in the list. 
+Trainer will tell each student the number in the list. 
 Use that number for you below instead of `x`.
 
 
@@ -124,7 +124,7 @@ nmcli connection modify "Wired connection 1" connection.id enp0s8
 nmcli connection modify enp0s8 ipv4.method manual ipv4.addresses 10.10.x.1/24 connection.autoconnect yes
 ```
 
-#### Add static route via Teacher IP as gateway
+#### Add static route via trainer's IP as gateway
 nmcli connection modify enp0s8 +ipv4.routes "10.10.0.0/16 10.10.x.111"
 
 #### Apply the changes
@@ -183,13 +183,13 @@ sysctl -p
 
 ## Test whole config 
 
-Students can check connection to teacher's Linux by pinging teacher's IP in student's subnet.
+Students can check connection to trainer's Linux by pinging trainer's IP in student's subnet.
 
 ```bash
 ping 10.10.x.111
 ```
 
-Or pinging IP in Teacher's subnet
+Or pinging IP in trainer's subnet
 
 ```bash
 ping 10.10.0.1
@@ -198,7 +198,7 @@ ping 10.10.0.1
 Both should work for all students.
 
 
-Teacher can check all student's IP's
+Trainer can check all student's IP's
 
 ```bash
 yum -y install fping
@@ -217,7 +217,7 @@ ping 10.10.1.1
 ```
 
 It should also work.
-Keep that ping till the teacher will run following:
+Keep that ping till the trainer will run following:
 
 ```bash
 echo 0 > /proc/sys/net/ipv4/ip_forward
@@ -225,7 +225,7 @@ echo 0 > /proc/sys/net/ipv4/ip_forward
 
 Ping should stop. Why ?
 
-After teacher will run following, ping should work again:
+After trainer will run following, ping should work again:
 
 ```bash
 echo 1 > /proc/sys/net/ipv4/ip_forward
