@@ -30,8 +30,65 @@ Both trainer and students should do this section.
     * After booting it will get the interface name **[enp0s8]**
 
 
+## STUDENT's Config (each student should do this section)
+
+Trainer will tell each student the number in the list. 
+Use that number for you below instead of `x`.
+
+### Configure static IP `10.10.x.1/24` on **[enp0s8]** interface.
+Instead on "**nmtui**" we can use here another good tool - "**nmcli**"
+
+#### Show current state
+
+```bash
+nmcli connection show
+```
+
+#### Rename the Connection Profile
+
+```bash
+nmcli connection modify "Wired connection 1" connection.id enp0s8
+```
+
+#### Assign static IP 
+
+```bash
+nmcli connection modify enp0s8 ipv4.method manual ipv4.addresses 10.10.x.1/24 connection.autoconnect yes
+```
+
+#### Add static route via trainer's IP as gateway
+```bash
+nmcli connection modify enp0s8 +ipv4.routes "10.10.0.0/16 10.10.x.111"
+```
+
+#### Apply the changes
+
+```bash
+nmcli connection down enp0s8 ; nmcli connection up enp0s8
+```
+
+#### Check that config is persistent (will remain after reboot)
+
+Type <Tab><Tab> to see files in that directory
+
+```bash
+cat /etc/NetworkManager/system-connections/
+```
+
+### Set your hostname to "lt0x.am"
+
+```bash
+nmcli general hostname lt0x.am
+```
+
+> The same can be done with `hostnamectl set-hostname lt0x.am`
+
+
+> All the above can also be done with "**nmtui**" interactive tool.
+
+
   
-## Trainer's Config (**Students do not need to do this section **, it is provided just for information)
+## TRAINER's Config (Students do not need to do this section, it is provided just for information)
 
 ### Show current state
 
@@ -96,63 +153,7 @@ cat /proc/sys/net/ipv4/ip_forward
 > We do this here on trainer's Linux system only for this training purposes !
 
 
-## STUDENT's Config
 
-Trainer will tell each student the number in the list. 
-Use that number for you below instead of `x`.
-
-
-### Configure static IP `10.10.x.1/24` on **[enp0s8]** interface.
-Instead on "**nmtui**" we can use "**nmcli**"
-
-
-#### Show current state
-
-```bash
-nmcli connection show
-```
-
-#### Rename the Connection Profile
-
-```bash
-nmcli connection modify "Wired connection 1" connection.id enp0s8
-```
-
-#### Assign static IP 
-
-```bash
-nmcli connection modify enp0s8 ipv4.method manual ipv4.addresses 10.10.x.1/24 connection.autoconnect yes
-```
-
-#### Add static route via trainer's IP as gateway
-```bash
-nmcli connection modify enp0s8 +ipv4.routes "10.10.0.0/16 10.10.x.111"
-```
-
-#### Apply the changes
-
-```bash
-nmcli connection down enp0s8 ; nmcli connection up enp0s8
-```
-
-#### Check that config is persistent (will remain after reboot)
-
-Type <Tab><Tab> to see files in that directory
-
-```bash
-cat /etc/NetworkManager/system-connections/
-```
-
-### Set your hostname to "lt0x.am"
-
-```bash
-nmcli general hostname lt0x.am
-```
-
-> The same can be done with `hostnamectl set-hostname lt0x.am`
-
-
-> All the above can also be done with "**nmtui**" interactive tool.
 
 
 ### Disable ICMP redirects for `enp0s8` interface
@@ -171,7 +172,7 @@ echo "net.ipv4.conf.enp0s8.send_redirects=0" | tee -a /etc/sysctl.conf
 
 > NOTE! 
 > In the above 2 commands the same thing is done in 2 ways.
-> On seconde line instead of `>>` we used `| tee -a`
+> On second line instead of `>>` we used `| tee -a`
 > Difference is that `tee` command will also show the same in the terminal.
 > You should not see first line output, but should see the second one.
 > So this way is more visual, than `>>`

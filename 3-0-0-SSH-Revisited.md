@@ -89,7 +89,7 @@ ssh trainer@[each student IP]
 
 Each student now has access to trainer system.
 
-Trainer will now restrict access to one command `mc`
+Trainer will now restrict access to one command `htop`
 (SHOULD BE DONE ONLY BY TRAINER)
 
 ```bash
@@ -100,7 +100,7 @@ for i in {1..15}; do
         # Check if the user exists and has authorized_keys file
     if id "$user" &>/dev/null && [ -f "$authorized_keys" ]; then
         # sed -i.bak will create the backup automatically
-        sed -i.bak 's/^ssh-/command="mc" &/' "$authorized_keys"    
+        sed -i.bak 's/^ssh-/command="htop" &/' "$authorized_keys"    
         echo "Updated $authorized_keys (backup created as $authorized_keys.bak)"
     else
         echo "User $user or authorized_keys file not found, skipping..."
@@ -108,7 +108,7 @@ for i in {1..15}; do
 done
 ```
 
-Now if you try to login again at trainer system, you should only get one command `mc` running anf after exiting it you will be logged out.
+Now if you try to login again at trainer system, you should only get one command `htop` running anf after exiting it you will be logged out.
 
 
 #### PRACTICE
@@ -116,7 +116,7 @@ Now if you try to login again at trainer system, you should only get one command
 Do that same for trainer access to you system.
 
 Change `/home/trainer/.ssh/authorized_keys` in your system <br>
-and add `command="mc" ` before ` ssh-rsa ...`
+and add `command="htop" ` before ` ssh-rsa ...`
 
 
 ### Restricting key-based SSH access to particular IP addresses
@@ -142,18 +142,14 @@ There are other useful options.
 >> 
 >
 > * **command="<command>"**  _- Means that once authenticated, the command specified is run, and the connection is closed. Again, this is useful in automated setups for running only a certain script on successful authentication, and nothing else._
-> 
-> 
+>
 > * **no-agent-forwarding**  _- Prevents the key user from forwarding authentication requests 
 > to an SSH agent on their client, using the -A or ForwardAgent option to ssh._
->
 > 
 > * **no-port-forwarding** - _Prevents the key user from forwarding ports using -L and -R._
 >
-> 
 > * **no-X11-forwarding**  - _Prevents the key user from forwarding X11 processes._
 >
-> 
 > * **no-pty** - _Prevents the key user from being allocated a tty device at all (does not allow interactive login)_
 >
 > * **restrict** -  NEW option that automatically enables all of these restrictions (most of the above):
@@ -164,23 +160,23 @@ There are other useful options.
 >   * no-user-rc (no ~/.ssh/rc execution)
 > 
 
-**So you can use only `restrict` !** 
+**So sometimes it is useful to use `restrict` !** 
 
 #### PRACTICE
 
 Add `from=127.0.0.1` to the line of trainer public key, before "**ssh-rsa ...**" 
-in `/home/traner/.ssh/authorized_keys` file: 
+in `/home/trainer/.ssh/authorized_keys` file: 
 
 the line should look like
 
 ```bash
-from=127.0.0.1,command="mc" ssh-rsa ...
+from=127.0.0.1,command="htop" ssh-rsa ...
 ```
 
 Check 
 
 ```bash
-cat /home/traner/.ssh/authorized_keys
+cat /home/trainer/.ssh/authorized_keys
 ```
 
 Now try connecting:  
@@ -190,20 +186,20 @@ Now try connecting:
 trainer@127.0.0.1 
 ```
 
-You will get `mc` command output
+You will get `htop` command output
 
 * trainer trying from other IP address
 
 Should not be able to login without password
 
 
-Now edit `/home/traner/.ssh/authorized_keys` again and add trainer's IP address
+Now edit `/home/trainer/.ssh/authorized_keys` again and add trainer's IP address
 
 
 the line should look like
 
 ```bash
-from="127.0.0.1,[TRAINER IP]",command="mc" ssh-rsa ...
+from="127.0.0.1,[TRAINER IP]",command="htop" ssh-rsa ...
 ```
 
 Now trainer should be able to login
@@ -211,15 +207,15 @@ Now trainer should be able to login
 
 #### Restrict most options with `restrict`
 
-Now edit `/home/traner/.ssh/authorized_keys` again and add `restrict` option in the beginning.
+Now edit `/home/trainer/.ssh/authorized_keys` again and add `restrict` option in the beginning.
 
 the line should look like
 
 ```bash
-restrict,from="127.0.0.1,[TRAINER IP]",command="mc" ssh-rsa ...
+restrict,from="127.0.0.1,[TRAINER IP]",command="htop" ssh-rsa ...
 ```
 
-Now trainer should not be able to login.
+Now trainer should not be able to login with public key.
 
 Why ?
 
