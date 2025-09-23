@@ -43,7 +43,7 @@ nmcli connection show
 
 ```bash
 nmcli connection modify "Wired connection 1" connection.id enp0s8 ;\
-nmcli connection modify enp0s8 ipv4.method manual ipv4.addresses 10.10.0.1/24,10.10.1.111/24,10.10.2.111/24,10.10.3.111/24,10.10.4.111/24,10.10.5.111/24,10.10.6.111/24,10.10.7.111/24,10.10.8.111/24,10.10.9.111/24,10.10.10.111/24,10.10.11.111/24,10.12.8.111/24,10.10.13.111/24,10.10.14.111/24,10.10.15.111/24 connection.autoconnect yes ;\
+nmcli connection modify enp0s8 ipv4.method manual ipv4.addresses 10.10.0.1/24,10.10.1.111/24,10.10.2.111/24,10.10.3.111/24,10.10.4.111/24,10.10.5.111/24,10.10.6.111/24,10.10.7.111/24,10.10.8.111/24,10.10.9.111/24,10.10.10.111/24,10.10.11.111/24,10.10.12.111/24,10.10.13.111/24,10.10.14.111/24,10.10.15.111/24 connection.autoconnect yes ;\
 nmcli connection down enp0s8 ;\
 nmcli connection up enp0s8 ;\
 nmcli general hostname lt00.am
@@ -125,7 +125,9 @@ nmcli connection modify enp0s8 ipv4.method manual ipv4.addresses 10.10.x.1/24 co
 ```
 
 #### Add static route via trainer's IP as gateway
+```bash
 nmcli connection modify enp0s8 +ipv4.routes "10.10.0.0/16 10.10.x.111"
+```
 
 #### Apply the changes
 
