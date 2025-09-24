@@ -156,23 +156,24 @@ cat /proc/sys/net/ipv4/ip_forward
 
 
 
-### Disable ICMP redirects for `enp0s8` interface
+### Disable ICMP redirects (should do all)
 
 In TCP/IP (inside Linux Kernel) ICMP redirects are used to inform hosts of a "better" next-hop route.
 Below we configure Linux not to accept it to have clear model of our routing.
 (This is required only for our training, not for production, because here we put many subnets in same network).
 
 ```bash
-echo "net.ipv4.conf.enp0s8.accept_redirects=0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.accept_redirects=0" >> /etc/sysctl.conf 
+echo "net.ipv4.conf.default.accept_redirects=0" >> /etc/sysctl.conf
+
+echo "net.ipv4.conf.all.send_redirects=0" | tee -a /etc/sysctl.conf
+echo "net.ipv4.conf.default.send_redirects=0" | tee -a /etc/sysctl.conf
 ```
 
-```bash
-echo "net.ipv4.conf.enp0s8.send_redirects=0" | tee -a /etc/sysctl.conf
-```
 
 > NOTE! 
-> In the above 2 commands the same thing is done in 2 ways.
-> On second line instead of `>>` we used `| tee -a`
+> In the above commands the same thing is done in 2 ways.
+> On last lines instead of `>>` we used `| tee -a`
 > Difference is that `tee` command will also show the same in the terminal.
 > You should not see first line output, but should see the second one.
 > So this way is more visual, than `>>`
