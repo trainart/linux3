@@ -32,7 +32,7 @@ dnf config-manager --set-enabled crb
 Now install needed packages and tools
 
 ```bash
-yum -y install httpd mod_ssl openssl elinks lynx curl
+dnf -y install httpd mod_ssl openssl elinks lynx curl w3m
 ```
 
 
@@ -48,7 +48,7 @@ ps ax | grep httpd
 ```
 
 ```bash
-ss -4nlpt | grep httpd
+ss -nlpt | grep httpd
 ```
 
 #### PRACTICE
@@ -260,7 +260,7 @@ links www.lt0x.am/secure/
 
 Install required packages:
 ```bash
-yum -y install php php-common php-gd php-xml php-mbstring php-mysqlnd php-gd
+dnf -y install php php-common php-gd php-xml php-mbstring php-mysqlnd php-gd
 ```
 
 Restart Apache:
@@ -299,7 +299,7 @@ links http://www.lt0x.am/
 
 ### Install MariaDB (MySQL)
 ```bash
-yum -y install mariadb mariadb-server
+dnf -y install mariadb mariadb-server
 ```
 
 Enable and Start MySQL:
