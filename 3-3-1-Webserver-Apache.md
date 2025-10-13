@@ -51,10 +51,25 @@ ps ax | grep httpd
 ss -nlpt | grep httpd
 ```
 
-#### PRACTICE
-* Now when you have running Apache webserver, set current IP address (`10.10.x.1`) of your Linux server to `www.lt0x.am` record in the BIND DNS server and restart BIND.<br><br>
-* If you did everything correct you should be able to open it locally, with `links www.lt0x.am`<br><br>
-* Now try also `links lt0x.am`. Did it open? Why? How to fix it?
+Now when you have running Apache webserver with default configuration.
+If you did everything correct you should be able to open default webpage with some text browser or command-line HTTP client `curl` 
+(**w3m**,  **links**,  **lynx**,  **curl** )
+
+```bash
+w3m www.lt0x.am
+```
+
+```bash
+links www.lt0x.am
+```
+
+```bash
+lynx www.lt0x.am
+```
+
+```bash
+curl www.lt0x.am
+```
 
 
 
@@ -92,10 +107,17 @@ ErrorLog /var/log/httpd/lt0x.am-error.log
 
 > REMEMBER to change `x` in every `lt0x.am` with your number.<br>
 > You can do that with commands like<br>
-> `sed -i.bkp 's/lt0x/lt00/g' /etc/httpd/conf.d/lt0x.am.conf`<br>
 > But change `lt00` to your number before running it
 
+```bash
+sed -i.bkp 's/lt0x/lt00/g' /etc/httpd/conf.d/lt0x.am.conf
+```
 
+Check result
+
+```bash
+diff /etc/httpd/conf.d/lt0x.am.conf /etc/httpd/conf.d/lt0x.am.conf.bkp
+```
 
 
 Create virtual host website directory:  
@@ -108,7 +130,7 @@ Create file `/var/www/lt0x.am/index.html`
 with text:
 
 ```bash
-HI this is APACHE page
+echo "HI this is APACHE page" > /var/www/lt0x.am/index.html
 ```
 
 Restart Apache:
@@ -117,6 +139,14 @@ systemctl restart httpd
 ```
 
 Check
+
+```bash
+w3m lt0x.am
+```
+
+```bash
+lynx lt0x.am
+```
 
 ```bash
 links lt0x.am
@@ -144,8 +174,9 @@ mkdir -p /var/www/lt0x.am/closed/img
 
 Create file  `/var/www/lt0x.am/closed/test.html`
 with text:
+
 ```bash
-<h2> Hello Linux </h2>
+echo "<h2> Hello Linux </h2>" > /var/www/lt0x.am/closed/test.html
 ```
 
 Create file `/var/www/lt0x.am/closed/.htaccess`
@@ -160,7 +191,7 @@ options +indexes
 
 Now try opening it
 ```bash
-links www.lt0x.am/closed
+links lt0x.am/closed
 ```
 
 To access it you need to uncomment `#allow from 10.` line in `.htaccess`
@@ -172,14 +203,14 @@ Now you should be able to access the directory, and you will see it's file list,
 Add hashtag before line `options +indexes` to comment it
 and try to open again
 ```bash
-links www.lt0x.am/closed
+links lt0x.am/closed
 ```
 
 You will not see the directory contents. 
 But you can access files by the name:
 
 ```bash
-links www.lt0x.am/closed/test.html
+links lt0x.am/closed/test.html
 ```
 
 Now we can create an index file 
@@ -191,7 +222,7 @@ with text:
 
 Try to open it again
 ```bash
-links www.lt0x.am/closed
+links lt0x.am/closed
 ```
 
 #### QUESTION
