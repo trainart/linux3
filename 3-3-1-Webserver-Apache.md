@@ -485,15 +485,27 @@ Restart Apache:
 systemctl restart httpd 
 ```
 
-Check byt directly accessing with HTTPS: 
+
+Check by directly accessing with HTTPS: 
 
 ```bash
 lynx https://lt0x.am/
 ```
 
-> NOTE! We use here `lynx` browser, since it is more loyal to self-signed certificates
 
-Redirect 80 port to 443 (SSL)
+Check the certificate info:
+
+```bash
+openssl s_client -connect lt0x.am:443 < /dev/null | openssl x509 -text -noout
+```
+
+
+```bash
+w3m -dump_extra https://lt0x.am/
+```
+
+
+#### Redirect 80 port to 443 (SSL)
 
 Add following line to  `/etc/httpd/conf.d/lt0x.am.conf`
 after `ServerAlias` line:
