@@ -422,15 +422,16 @@ curl http://lt0x.am/mysqltest.php
 ### Configure ‘mod_ssl’ for Apache
 
 > REMEMER TO CHANGE `lt0x.am` below  
-> (**in 3 places !!!**)
+> (**in 5 places !!!**)
 
 Self-signed Certificate generation:
 
 ```bash
-openssl req -x509 -batch -nodes -days 3650 -newkey rsa:4096 -keyout lt0x.am.key -out lt0x.am.crt -subj "/C=AM/ST=Yerevan/L=Yerevan/O=AITC/OU=Linux Training/CN=lt0x.am"  -addext "basicConstraints=critical,CA:FALSE"  -addext "keyUsage=digitalSignature,keyEncipherment"  -addext "extendedKeyUsage=serverAuth"
+openssl req -x509 -batch -nodes -days 3650 -newkey rsa:4096 -keyout lt0x.am.key -out lt0x.am.crt -subj "/C=AM/ST=Yerevan/L=Yerevan/O=AITC/OU=Linux Training/CN=lt0x.am"  -addext "basicConstraints=critical,CA:FALSE"  -addext "keyUsage=digitalSignature,keyEncipherment"  -addext "extendedKeyUsage=serverAuth"   -addext "subjectAltName=DNS:lt0x.am,DNS:www.lt0x.am"
 ```
 
-Put certificates at their place:
+Put certificates at their places:
+
 ```bash
 mv lt0x.am.crt /etc/pki/tls/certs
 ```
@@ -492,6 +493,7 @@ Check by directly accessing with HTTPS:
 lynx https://lt0x.am/
 ```
 
+
 Check the certificate info:
 
 ```bash
@@ -508,22 +510,27 @@ after `ServerAlias` line:
 Redirect permanent  /  https://www.lt0x.am/
 ```
 
-It should look like:
+Following `sed` command will do that automatically
+
 ```bash
-<VirtualHost *:80> 
-ServerName lt0x.am
-ServerAlias www.lt0x.am
-Redirect permanent  /  https://www.lt0x.am/
-DocumentRoot /var/www/lt0x.am
-CustomLog /var/log/httpd/lt0x.am-access.log combined
-ErrorLog /var/log/httpd/lt0x.am-error.log
- <Directory /var/www/lt0x.am>
-      DirectoryIndex index.php index.html
-      Options -Indexes
-      AllowOverride ALL
- </Directory>
-</VirtualHost>
+sed -i.bkp '/ServerAlias/a\Redirect permanent  /  https://www.lt0x.am/' /etc/httpd/conf.d/lt0x.am.conf
 ```
+
+> NOTE! This is first time we use `/a` option in `sed`
+> It allows to add a line after a pattern, which here is `ServerAlias`)
+
+Check 
+
+```bash
+diff /etc/httpd/conf.d/lt0x.am.conf /etc/httpd/conf.d/lt0x.am.conf.bkp
+```
+
+See the line in the context
+
+```bash
+grep -A 1 -B 1 "Redirect permanent" /etc/httpd/conf.d/lt0x.am.conf
+```
+> Options `-A 1` and `-B 1` show one line before and one line after the pattern
 
 Restart Apache: 
 ```bash
@@ -537,14 +544,27 @@ Check:
 lynx http://lt0x.am/
 ```
 
-You will see the "301 Moved Permanently" message.
-Now to make curl follow it and get the ssl you need to run: 
-
-> NOTE: '--insecure' option is needed because we use self-signed certificate
+With `curl` you will see what is going on 
+(the "301 Moved Permanently" message).
 
 ```bash
-curl --location --insecure http://lt0x.am/mysqltest.php
+curl http://lt0x.am/
 ```
+
+Now if we add `--location` option it will follow the redirect.
+
+
+```bash
+curl --location http://lt0x.am/
+```
+
+You should now see the error `SSL certificate problem: self-signed certificate`.
+So we need to add '--insecure' option, because we use self-signed certificate.
+
+```bash
+curl --location --insecure http://lt0x.am/
+```
+
 
 
 ### Hardening Apache
@@ -559,7 +579,7 @@ First check current state:
 curl -sI http://lt0x.am | grep Server
 ```
 
-Now add options and restart Apache
+Now add options
 
 ```bash
 cat  > /etc/httpd/conf.d/harden.conf  << "EOF1"
@@ -569,8 +589,11 @@ Timeout 45
 LimitRequestBody 1048576
 EOF1
 
-systemctl restart httpd   
+```
 
+Restart Apache
+```bash
+systemctl restart httpd   
 ```
 
 
@@ -580,3 +603,4 @@ curl -sI http://lt0x.am | grep Server
 ```
 
 You should not see any details now.
+
