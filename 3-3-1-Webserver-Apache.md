@@ -432,7 +432,10 @@ openssl req -x509 -batch -nodes -days 3650 -newkey rsa:4096 -keyout lt0x.am.key 
 
 Put certificates at their place:
 ```bash
-mv lt0x.am.crt /etc/pki/tls/certs ;\
+mv lt0x.am.crt /etc/pki/tls/certs
+```
+
+```bash
 mv lt0x.am.key /etc/pki/tls/private
 ```
 
@@ -465,13 +468,17 @@ with text:
 </VirtualHost>
 ```
 
-> REMEMBER to change `x` in every `lt0x.am` with your number.<br>
-> You can do that with commands like<br>
-> `sed -i 's/lt0x/lt00/g' /etc/httpd/conf.d/lt0x.am-ssl.conf`<br>
-> or<br>
-> `perl -pi -e "s/lt0x/lt00/" /etc/httpd/conf.d/lt0x.am-ssl.conf `<br>
-> But change `lt00` to your number before running it
+REMEMBER to change `x` in every `lt0x.am` with your number.<br>
 
+```bash
+sed -i.bkp 's/lt0x/lt00/g' /etc/httpd/conf.d/lt0x.am-ssl.conf
+```
+
+Check result
+
+```bash
+diff /etc/httpd/conf.d/lt0x.am-ssl.conf /etc/httpd/conf.d/lt0x.am-ssl.conf.bkp
+```
 
 Restart Apache: 
 ```bash
@@ -481,7 +488,7 @@ systemctl restart httpd
 Check byt directly accessing with HTTPS: 
 
 ```bash
-linx https://lt0x.am/
+lynx https://lt0x.am/
 ```
 
 > NOTE! We use here `lynx` browser, since it is more loyal to self-signed certificates
@@ -521,7 +528,7 @@ Now if you access the site at `80` port you will be automatically redirected to 
 
 Check: 
 ```bash
-linx http://lt0x.am/
+lynx http://lt0x.am/
 ```
 
 You will see the "301 Moved Permanently" message.
