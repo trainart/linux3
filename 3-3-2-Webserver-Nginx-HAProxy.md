@@ -26,23 +26,29 @@ we need to ensure Apache and Nginx are running on different addresses.
   * value:  `10.10.x.200`
 
  
-2. Use 'nmtui' to assign additional static IPs 
-   1. `10.10.x.100` 
-   2. `10.10.x.200` 
+2. Use `nmcli` to assign additional static IPs `10.10.x.100`, `10.10.x.200` to your second interface `enp0s8`<br> 
+(remember to change `x`)
 
-to you second interface `enp0s8` 
+```bash
+nmcli connection modify enp0s8 +ipv4.addresses "10.10.x.100/24,10.10.x.200/24"
+```
 
+Restart the interface to apply changes
 
+```bash
+nmcli connection down enp0s8 ;\
+nmcli connection up enp0s8
+```
 
 
 Change Apache config to listen port `80` only for ip address `10.10.x.100`. 
 
 ```bash
-sed -i 's/Listen 80/Listen 10.10.x.100:80/g' /etc/httpd/conf/httpd.conf
+sed -i.bkp 's/Listen 80/Listen 10.10.x.100:80/g' /etc/httpd/conf/httpd.conf
 ```
 
 ```bash
-sed -i 's/*:80/10.10.x.100:80/g' /etc/httpd/conf.d/lt0x.am.conf
+sed -i.bkp 's/*:80/10.10.x.100:80/g' /etc/httpd/conf.d/lt0x.am.conf
 ```
 
 Restart Apache:
@@ -79,7 +85,7 @@ systemctl enable --now nginx
 Change default config to listen only port `80` of IP `10.10.x.200`
 
 ```bash
-sed -i 's/listen       80/listen       10.10.x.200:80/g' /etc/nginx/nginx.conf
+sed -i.bkp 's/listen       80/listen       10.10.x.200:80/g' /etc/nginx/nginx.conf
 ```
 
 Try starting Nginx again: 
@@ -145,7 +151,7 @@ root /var/www/nginx.lt0x.am;
 
 > REMEMBER to change `x` in every `lt0x.am` with your number.<br>
 > You can do that with commands like<br>
-> `sed -i 's/lt0x/lt00/g' /etc/nginx/conf.d/nginx.lt0x.am.conf`<br>
+> `sed -i.bkp 's/lt0x/lt00/g' /etc/nginx/conf.d/nginx.lt0x.am.conf`<br>
 > But change `lt00` to your number before running it
 
 
