@@ -157,7 +157,7 @@ curl -s http://lt0x.am/ | grep APACHE
 ```
 
 
-### Access Control with .htaccess (http://www.htaccess-guide.com/)
+### Access Control with **.htaccess**
 
 It is possible to restrict visitors by IP address. 
 This function id enabled on per-directory basis 
@@ -421,13 +421,13 @@ curl http://lt0x.am/mysqltest.php
 
 ### Configure ‘mod_ssl’ for Apache
 
-> REMEMER TO CHANGE `lt0x.am` below
+> REMEMER TO CHANGE `lt0x.am` below  
+> (**in 3 places !!!**)
 
 Self-signed Certificate generation:
 
 ```bash
-openssl req -x509 -batch -nodes -days 3650 -newkey rsa:4096 -keyout lt0x.am.key -out lt0x.am.crt -subj "/C=AM/ST=Yerevan/L=Yerevan/O=AITC/OU=Linux Training/CN=lt0x.am"
-
+openssl req -x509 -batch -nodes -days 3650 -newkey rsa:4096 -keyout lt0x.am.key -out lt0x.am.crt -subj "/C=AM/ST=Yerevan/L=Yerevan/O=AITC/OU=Linux Training/CN=lt0x.am"  -addext "basicConstraints=critical,CA:FALSE"  -addext "keyUsage=digitalSignature,keyEncipherment"  -addext "extendedKeyUsage=serverAuth"
 ```
 
 Put certificates at their place:
@@ -439,7 +439,7 @@ mv lt0x.am.crt /etc/pki/tls/certs
 mv lt0x.am.key /etc/pki/tls/private
 ```
 
-> Nowadays there are several ways to get free production SSL certificate from CAa like `LetsEncrypt` or `ZeroSSL`.
+> FYI: Currently there are several ways to get free production SSL certificate from CAa like `LetsEncrypt` or `ZeroSSL`.
 > They only give certificates for 3 month, so there should be some automated procedure to update it regularly.
 > This is done by scripts like `certbot` 
 > Unfortunately to try all the above, you should have real domain configured for your dns name and have real IP access from outside world.
@@ -458,8 +458,8 @@ with text:
         ServerName lt0x.am
         ServerAlias www.lt0x.am
         DocumentRoot /var/www/lt0x.am
-        ErrorLog logs/lt0x.am-ssl_error_log
-        TransferLog logs/lt0x.am-ssl_access_log
+        CustomLog /var/log/httpd/lt0x.am-ssl_access.log combined
+        ErrorLog /var/log/httpd/lt0x.am-ssl_error.log
         <Directory /var/www/lt0x.am >
         DirectoryIndex index.php index.html
         Options -Indexes
@@ -492,16 +492,10 @@ Check by directly accessing with HTTPS:
 lynx https://lt0x.am/
 ```
 
-
 Check the certificate info:
 
 ```bash
-openssl s_client -connect lt0x.am:443 < /dev/null | openssl x509 -text -noout
-```
-
-
-```bash
-w3m -dump_extra https://lt0x.am/
+openssl s_client -connect lt0x.am:443 < /dev/null 2>/dev/null | grep self-signed
 ```
 
 
