@@ -292,5 +292,5 @@ curl -s http://ha.lt0x.am/ | grep -E '(301|NGINX)'
 
 > NOTE: this is very simple configuration example. 
 > Production solution requires much more to configure as well as
-> additional services like `keepalived`, `vrrp`, etc., which are out of scope of this training material.
+> additional services like `keepalived``vrrp`, etc., which are out of scope of this training material.
 
