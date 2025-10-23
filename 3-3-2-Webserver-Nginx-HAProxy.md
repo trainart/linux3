@@ -2,6 +2,20 @@
 
 ## Web Server (Nginx) (+ HAProxy) 
 
+This example is based on the environment like follows.
+
+```bash
+--------+---------------------+----------------------+------------
+        |                     |                      |
+        |10.10.x.10:80        |10.10.x.100:80        |10.10.x.200:80
++-------+--------+   +--------+---------+   +--------+---------+
+| [ ha.lt0x.am ] |   | [apache.lt0x.am] |   | [ nginx.lt0x.am] |
+|     HAProxy    |   | Apache Server #1 |   |  Nginx Server#2  |
++----------------+   +------------------+   +------------------+
+
+```
+
+We already have Apache. Now we can install Nginx as another webserver.
 
 Nginx is another widely used webserver. 
 Nginx is known for its high performance and low resource. 
@@ -13,7 +27,7 @@ we need to ensure Apache and Nginx are running on different addresses.
 
 #### PRACTICE
 
-1. Now add new `A` DNS records `nginx.lt0x.am` &  `apache.lt0x.am` for your domain 
+1. Now add new `A` DNS records `nginx.lt0x.am`, `apache.lt0x.am` and  `ha.lt0x.am`  for your domain 
 
 * `apache.lt0x.am` A resource record:
   * name:   `apache` 
@@ -24,20 +38,23 @@ we need to ensure Apache and Nginx are running on different addresses.
   * name:   `nginx` 
   * type:   `A` 
   * value:  `10.10.x.200`
-
- 
-2. Use `nmcli` to assign additional static IPs `10.10.x.100`, `10.10.x.200` to your second interface `enp0s8`<br> 
+  
+* `ha.lt0x.am` A resource record:
+  * name:   `ha` 
+  * type:   `A` 
+  * value:  `10.10.x.10`
+  
+2. Use `nmcli` to assign additional static IPs `10.10.x.100`, `10.10.x.200`, `10.10.x.10` to your second interface `enp0s8`<br> 
 (remember to change `x`)
 
 ```bash
-nmcli connection modify enp0s8 +ipv4.addresses "10.10.x.100/24,10.10.x.200/24"
+nmcli connection modify enp0s8 +ipv4.addresses "10.10.x.100/24,10.10.x.200/24,10.10.x.10/24"
 ```
 
 Restart the interface to apply changes
 
 ```bash
-nmcli connection down enp0s8 ;\
-nmcli connection up enp0s8
+nmcli connection down enp0s8 ; nmcli connection up enp0s8
 ```
 
 
@@ -196,45 +213,6 @@ _(based on `https://www.server-world.info/en/note?os=CentOS_8&p=haproxy&f=1`)_
 	
 HAProxy allows to implement load balancing between multiple servers. <br>
 Simple configuration of two servers Apache and Nginx follows.
-
-This example is based on the environment like follows.
-```bash
---------+---------------------+----------------------+------------
-        |                     |                      |
-        |10.10.x.10:80        |10.10.x.100:80        |10.10.x.200:80
-+-------+--------+   +--------+---------+   +--------+---------+
-| [ ha.lt0x.am ] |   | [apache.lt0x.am] |   | [ nginx.lt0x.am] |
-|     HAProxy    |   | Apache Server #1 |   |  Nginx Server#2  |
-+----------------+   +------------------+   +------------------+
-
-```
-
-We already have Apache & Nginx configured.
-
-
-1. Now add new `A` DNS records `ha.lt0x.am` for your domain 
-
-* `ha.lt0x.am` A resource record:
-  * name:   `ha` 
-  * type:   `A` 
-  * value:  `10.10.x.10`
-  
-      
-2. Use nmcli to assign additional static IPs 10.10.x.10 to your second interface enp0s8
-(remember to change x)
-
-```bash
-nmcli connection modify enp0s8 +ipv4.addresses "10.10.x.10/24"
-```
-
-Restart the interface to apply changes
-
-```bash
-nmcli connection down enp0s8 ;\
-nmcli connection up enp0s8
-````
-
-
 
 Install HAProxy to configure Load Balancing Server.
 
