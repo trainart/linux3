@@ -219,9 +219,22 @@ We already have Apache & Nginx configured.
   * type:   `A` 
   * value:  `10.10.x.10`
   
-2. Use 'nmtui' to assign additional static IP
-   1. `10.10.x.10` 
-to you second interface `enp0s8` 
+      
+2. Use nmcli to assign additional static IPs 10.10.x.10 to your second interface enp0s8
+(remember to change x)
+
+```bash
+nmcli connection modify enp0s8 +ipv4.addresses "10.10.x.10/24"
+```
+
+Restart the interface to apply changes
+
+```bash
+nmcli connection down enp0s8 ;\
+nmcli connection up enp0s8
+````
+
+
 
 Install HAProxy to configure Load Balancing Server.
 
