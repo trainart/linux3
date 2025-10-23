@@ -185,11 +185,10 @@ Create new `/var/www/nginx.lt0x.am` directory for Nginx virtual host
 mkdir /var/www/nginx.lt0x.am
 ```
 
-Create `/var/www/nginx.lt0x.am/index.html` index page there:
-with text:
+Create `/var/www/nginx.lt0x.am/index.html` index page there with some text:
 
 ```bash
-HI this is NGINX page
+echo "HI this is NGINX page" > /var/www/nginx.lt0x.am/index.html
 ```
 
 Restart Nginx: 
@@ -219,8 +218,9 @@ tail -f /var/log/httpd/lt0x.am-access.log
 ```
 
 ### HAProxy : HTTP Load Balancing
+
 _(based on `https://www.server-world.info/en/note?os=CentOS_8&p=haproxy&f=1`)_
-	
+
 HAProxy allows to implement load balancing between multiple servers. <br>
 Simple configuration of two servers Apache and Nginx follows.
 
@@ -235,6 +235,8 @@ Move default HAProxy config and create simple configuration.
 ```bash
 mv /etc/haproxy/haproxy.cfg{,.backup}
 ```
+
+> `{,.backup}` method allows to get two names as two arguments for `mv`
 
 Create new `/etc/haproxy/haproxy.cfg` file:
 
@@ -273,18 +275,18 @@ netstat -nlpt | grep -E '(haproxy|http|nginx)'
 ```
 
 Now you connect to `lt0x.am` several times. 
-You should see Apache and Nginx pages in rotation
+You should see Apache (301 redirect page) and Nginx pages in rotation
 
 ```bash
-curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)'
+curl -s http://ha.lt0x.am/ | grep -E '(301|NGINX)'
 ```
 
 ```bash
-curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)'
+curl -s http://ha.lt0x.am/ | grep -E '(301|NGINX)'
 ```
 
 ```bash
-curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)'
+curl -s http://ha.lt0x.am/ | grep -E '(301|NGINX)'
 ```
 
 
