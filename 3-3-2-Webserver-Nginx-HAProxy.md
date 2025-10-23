@@ -9,8 +9,8 @@ This example is based on the environment like follows.
         |                     |                      |
         |10.10.x.10:80        |10.10.x.100:80        |10.10.x.200:80
 +-------+--------+   +--------+---------+   +--------+---------+
-| [ ha.lt0x.am ] |   | [apache.lt0x.am] |   | [ nginx.lt0x.am] |
-|     HAProxy    |   | Apache Server #1 |   |  Nginx Server#2  |
+| [ ha.lt0x.am ] |   | [apache.lt0x.am] |   |  [nginx.lt0x.am] |
+|     HAProxy    |   | Apache Server #1 |   |  Nginx Server #2 |
 +----------------+   +------------------+   +------------------+
 
 ```
@@ -57,7 +57,6 @@ Restart the interface to apply changes
 nmcli connection down enp0s8 ; nmcli connection up enp0s8
 ```
 
-
 Change Apache config to listen port `80` only for ip address `10.10.x.100`. 
 
 ```bash
@@ -69,16 +68,19 @@ sed -i.bkp 's/*:80/10.10.x.100:80/g' /etc/httpd/conf.d/lt0x.am.conf
 ```
 
 Restart Apache:
+
 ```bash
 systemctl restart httpd
 ```
 
 Check that Apache listens only port 80 of that IP: 
+
 ```bash
 netstat -nlpt | grep :80
 ```
 
 Try opening: 
+
 ```bash
 lynx http://apache.lt0x.am
 ```
@@ -87,11 +89,13 @@ lynx http://apache.lt0x.am
 #### Install Nginx
 
 Install Nginx:  
+
 ```bash
 yum -y install nginx
 ```
 
 Enable & start Nginx: 
+
 ```bash
 systemctl enable --now nginx
 ```
@@ -106,16 +110,19 @@ sed -i.bkp 's/listen       80/listen       10.10.x.200:80/g' /etc/nginx/nginx.co
 ```
 
 Try starting Nginx again: 
+
 ```bash
 systemctl restart nginx
 ```
 
 Check that Nginx listens another IP's port 80: 
+
 ```bash
 netstat -nlpt | grep :80
 ```
 
 Try opening: 
+
 ```bash
 lynx http://nginx.lt0x.am
 ```
@@ -130,19 +137,19 @@ curl -sI http://nginx.lt0x.am | grep Server
 ```
 
 ```bash
-
 cat << "EOF1" > /etc/nginx/conf.d/tokens-off.conf
 server_tokens off;
 EOF1
-
 ```
 
 Restart Nginx: 
+
 ```bash
 systemctl restart nginx
 ```
 
 And check again:
+
 ```bash
 curl -sI http://nginx.lt0x.am | grep Server
 ```
@@ -180,6 +187,7 @@ mkdir /var/www/nginx.lt0x.am
 
 Create `/var/www/nginx.lt0x.am/index.html` index page there:
 with text:
+
 ```bash
 HI this is NGINX page
 ```
@@ -190,7 +198,8 @@ Restart Nginx:
 systemctl restart nginx
 ```
 
-Now try opening some `Nginx` URL and `Apache` URL. 
+Now try opening some `Nginx` URL and `Apache` URL 
+
 ```bash
 links nginx.lt0x.am
 ```
@@ -203,6 +212,7 @@ links apache.lt0x.am
 
 You should see appropriate logs.
 Check the logs of both Nginx & Apache (open in different terminals to see simultaneously): 
+
 ```bash
 tail -f /var/log/nginx/lt0x.am-access.log
 tail -f /var/log/httpd/lt0x.am-access.log
@@ -227,6 +237,7 @@ mv /etc/haproxy/haproxy.cfg{,.backup}
 ```
 
 Create new `/etc/haproxy/haproxy.cfg` file:
+
 ```bash
 # define frontend ( any name is OK for [http-in] )
 frontend http-in
@@ -247,14 +258,16 @@ backend backend_servers
 
 ```
 
-> Change `10.10.x` to you number.
+> Change `x` to your number.
 
 Enable and start HAProxy
+
 ```bash
 systemctl enable --now haproxy
 ```
 
 Check the status of all related services:
+
 ```bash
 netstat -nlpt | grep -E '(haproxy|http|nginx)'
 ```
@@ -275,5 +288,7 @@ curl -s http://ha.lt0x.am/ | grep -E '(APACHE|NGINX)'
 ```
 
 
-> NOTE: this is very simple configuration example. Production solution requires much more to configure as well as
+> NOTE: this is very simple configuration example. 
+> Production solution requires much more to configure as well as
 > additional services like `keepalived`, `vrrp`, etc., which are out of scope of this training material.
+
