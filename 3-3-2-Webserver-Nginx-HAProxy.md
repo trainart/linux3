@@ -164,8 +164,8 @@ with text:
 ```bash
 server {
 listen 10.10.x.200:80;
-access_log /var/log/nginx/nginx.lt0x.am-access.log;
-error_log /var/log/nginx/nginx.lt0x.am-error.log;
+access_log /var/log/nginx/lt0x.am-access.log;
+error_log /var/log/nginx/lt0x.am-error.log;
 server_name nginx.lt0x.am;
 location / {
 root /var/www/nginx.lt0x.am;
@@ -214,6 +214,9 @@ Check the logs of both Nginx & Apache (open in different terminals to see simult
 
 ```bash
 tail -f /var/log/nginx/lt0x.am-access.log
+```
+
+```bash
 tail -f /var/log/httpd/lt0x.am-access.log
 ```
 
@@ -236,7 +239,7 @@ Move default HAProxy config and create simple configuration.
 mv /etc/haproxy/haproxy.cfg{,.backup}
 ```
 
-> `{,.backup}` method allows to get two names as two arguments for `mv`
+> `{,.backup}` method allows to get two names as two arguments for `mv` (second name has `.backup` added)
 
 Create new `/etc/haproxy/haproxy.cfg` file:
 
@@ -257,7 +260,6 @@ backend backend_servers
     # define backend servers
     server             node01 10.10.x.100:80 check
     server             node02 10.10.x.200:80 check
-
 ```
 
 > Change `x` to your number.
