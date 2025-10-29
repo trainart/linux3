@@ -61,12 +61,17 @@ Before going to mail server, let's ensure you have prepared the DNS system for t
 
 #### Define hostname
 
-Set the hostname of each student to match appropriate separate domain (lt01.am,lt02.am,lt03.am,...).
+Ensure that the hostname of each student to match appropriate separate domain (lt01.am,lt02.am,lt03.am,...).
 
 ```bash
-hostnamectl set-hostname lt0x.am ; hostname 
+hostname 
 ```
 
+If not, set the proper hostname
+
+```bash
+hostnamectl set-hostname lt0x.am
+```
 
 
 ### Disable Firewalld or add the rules
