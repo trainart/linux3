@@ -22,16 +22,13 @@ which stores the email as it waits for the user to retrieve it.
 There are two main protocols used for retrieving email from MAA: 
 * **POP3** (Post Office Protocol), the older of the two, which is used for retrieving email and, in certain cases, leaving a copy of it on the server. 
 
-
 * **IMAP** (Internet Message Access Protocol), which is used for coordinating the status of emails (read, deleted, moved) across multiple email clients. With IMAP, a copy of every message is saved on the server, so that this synchronization task can be completed. 
 
 For this reason, _incoming mail servers_ (**MAA**s) 
 are called **POP** servers or **IMAP** servers, 
 depending on which protocol is used. 
 
-
-![img_3.png](../linux_training/level3-2025-Additional/img_3.png)
-
+![img_3.png](img_3.png)
 
 To use a real-world analogy, **MTA**s act as the post office 
 (the sorting area and mail carrier, which handle message transportation), 
