@@ -99,42 +99,33 @@ yum -y install postfix
 
 Configure Postfix
 
-Open `/etc/postfix/main.cf` and go to line 95 (_first line we want to edit now_)
+Change 2 lines in main config file `/etc/postfix/main.cf` 
+
+Make Postfix listen all network interfaces instead localhost only:
+
 ```bash
-nano +95 /etc/postfix/main.cf
-```
-or
-```bash
-vi +95 /etc/postfix/main.cf
+sed -i.bak 's/inet_interfaces = localhost$/inet_interfaces = all/' /etc/postfix/main.cf
 ```
 
-> In `nano` goto the some line number with `Ctrl-Shift-_`
-> 
-> In `vi`   goto the some line number  with `Esc`, 
-> then type the line number, and then press `Shift-g`
-> 
-> Just `Esc`+`Shift-g` will take you to the end of file
+Add our domain to the destination to get mails for it:
 
-```bash	
-# goto line 95: uncomment and specify hostname
+```bash
+sed -i.bak 's/mydestination = $myhostname, localhost.$mydomain, localhost$/mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain/' /etc/postfix/main.cf
+```
+
+Add following to `/etc/postfix/main.cf` 
+
+> REMEMBER to change `x` in 2 places to your number !
+ 
+```bash
+cat >> /etc/postfix/main.cf << 'END7'
+# Added for Linux training
 myhostname = lt0x.am
-# goto line 102: uncomment and specify domain name
 mydomain = lt0x.am
-# goto line 118: uncomment
 myorigin = $mydomain
-# goto line 135: change
-inet_interfaces = all
-# goto line 183: add
-mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
-# goto line 283: uncomment and specify your local network
 mynetworks = 127.0.0.0/8, 10.0.0.0/8
-# goto line 438: uncomment (use Maildir)
 home_mailbox = Maildir/
-# goto line 593: add
 smtpd_banner = $myhostname ESMTP
-
-# add following to the end of file
-
 # SMTP-Auth setting
 smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
@@ -142,7 +133,7 @@ smtpd_sasl_auth_enable = yes
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_local_domain = $myhostname
 smtpd_recipient_restrictions = permit_mynetworks, permit_auth_destination, permit_sasl_authenticated, reject
-
+END7
 ```
 
 
@@ -160,55 +151,50 @@ yum -y install dovecot
 
 Configure Dovecot to provide SASL (Simple Authentication and Security Layer) capability to Postfix
 
+Listen all IPs
+
 ```bash
-nano +30 /etc/dovecot/dovecot.conf
+echo 'listen = *' >> /etc/dovecot/dovecot.conf
+```
+
+Allow plaintext auth
+
+```bash
+echo 'disable_plaintext_auth = no' >> /etc/dovecot/conf.d/10-auth.conf
 ```
 
 ```bash
-# add following after line 30
-listen = *
+sed -i.bak 's/plain$/plain login/' /etc/dovecot/conf.d/10-auth.conf
 ```
 
-```bash
-nano +10 /etc/dovecot/conf.d/10-auth.conf
-```
+Define mailbox place
 
 ```bash
-# add following after line 10
-disable_plaintext_auth = no
-# go to line 100: and change as follows
-auth_mechanisms = plain login
+echo 'mail_location = maildir:~/Maildir' >> /etc/dovecot/conf.d/10-mail.conf
 ```
 
-```bash
-nano +30 /etc/dovecot/conf.d/10-mail.conf
-```
-```bash
-# add following after line 30
-mail_location = maildir:~/Maildir
-```
+
+Enable `postfix` to use `dovecot` for auth
+
+Open `10-master.conf`
 
 ```bash
 nano +107 /etc/dovecot/conf.d/10-master.conf
 ```
 
+Uncomment lines as follows
+
 ```bash
-# uncomment line 107-109 and add some lines as follows
 # Postfix smtp-auth
   unix_listener /var/spool/postfix/private/auth {
-    mode = 0666
-    user = postfix
-    group = postfix
+  mode = 0666
   }
 ```
 
-```bash
-nano +8 /etc/dovecot/conf.d/10-ssl.conf
-```
+Change SSL option to be not required
 
 ```bash
-# change line 8 as follows (means SSL is not required)
-ssl = yes
+sed -i.bak 's/ssl = required$/ssl = yes/' /etc/dovecot/conf.d/10-ssl.conf
 ```
 
 Enable and start Dovecot:
@@ -225,7 +211,7 @@ We can now create some new Linux OS user account to test email
 
 Install simple terminal mail client program
 ```bash
-yum -y install mailx
+dnf -y install s-nail
 ```
 Set environment variables to use Maildir:
 ```bash
@@ -242,7 +228,7 @@ Now try the above mail sending with `telnet`
 
 Install telnet if needed
 ```bash
-yum -y install telnet
+dnf -y install telnet
 ```
 
 #### Add **Rsyslog** configuration to log Postfix and Dovecot logs separately.
@@ -262,19 +248,9 @@ ENDTEXT
 
 ```
 
-Restart rsyslog:
+Restart rsyslog, postfix, dovecot
 ```bash
-systemctl restart rsyslog
-```
-
-Restart postfix:
-```bash
-systemctl restart postfix
-```
-
-Restart dovecot:
-```bash
-systemctl restart dovecot
+systemctl restart {rsyslog,postfix,dovecot} && systemctl is-active {rsyslog,postfix,dovecot}
 ```
 
 Check
@@ -288,42 +264,6 @@ Check
 ```bash
 tail /var/log/dovecot.log
 ```
-
-#### Add Logrotate config for Postfix & Dovecot
-
-
-```bash
-cat > /etc/logrotate.d/postfix << "ENDTEXT"
-/var/log/postfix.log {
-    rotate 24
-    monthly
-    compress
-    delaycompress
-    postrotate
-        /bin/systemctl reload postfix  
-    endscript
-}
-ENDTEXT
-```
-
-
-
-```bash
-cat > /etc/logrotate.d/dovecot << "ENDTEXT"
-/var/log/dovecot.log {
-    rotate 24
-    monthly
-    compress
-    delaycompress
-    postrotate
-        /bin/systemctl reload dovecot  
-    endscript
-}
-ENDTEXT
-```
-
-No restart is needed, since `logrotate` is not a service, but is run by `cron` 
-as `/etc/cron.daily/logrotate` daily run script.
 
 
 #### SMTP Session example
@@ -369,8 +309,8 @@ Date: Mon, 02 Feb 1991 13:00:57 +0400
 
 Hello, This is a test message.
 
-Yours truly,
-Administrator
+Greetings,
+Linux Trainer
 .
 ```
 
@@ -387,14 +327,25 @@ Try sending mail via terminal `mail` command
 mail tester@lt0x.am
 ```
 
-Switch to `tester` user and check mail
-(type `q` to exit  `mail` program)
+Type some text the press `Ctrl-D` to send mail.
+
+
+
+Switch to `tester` user 
+
 ```bash
 su - tester
+```
+
+Check mail (type `q` to exit  `mail` program)
+
+```bash
 mail
 ```
 
 Check logs
+
+`exit` from `tester` to  `root` first.
 
 ```bash
 tail /var/log/postfix.log
@@ -450,7 +401,7 @@ yum -y install thunderbird
 >
 
 
-> IMPORTANT! When configuring MailClient specify username as `tester` without domainname, 
+> IMPORTANT! When configuring Mail Client specify username as `tester` without domainname, 
 > since we use Linux users as test users.
 > In production nowadays mailbox users are generally not related to Linux users, 
 > but are created separately in some database, like MySQL.
@@ -461,53 +412,28 @@ yum -y install thunderbird
 
 Here we try to install and use `Snappymail` (https://snappymail.eu/)
 
-
-Upgrade PHP to version 7.4
-
-```bash
-dnf -y module reset php:7.2 && dnf -y module enable php:7.4
-```
-
-```bash
-yum -y install php php-common php-gd php-xml php-mbstring php-mysqlnd php-gd
-```
-
-Restart Apache
-```bash
-systemctl restart httpd
-```
-`
-
 Prepare directory and get the package
 
 ```bash
-mkdir -p /var/www/lt0x.am/webmail
-```
-```bash
-cd /var/www/lt0x.am/webmail
+mkdir -p /var/www/lt0x.am/webmail && cd /var/www/lt0x.am/webmail
 ```
 
-Download and extract Snappymail
+Install `wget`
 
 ```bash
-wget --inet4-only https://snappymail.eu/repository/latest.tar.gz
-```
-```bash
-tar -xzf latest.tar.gz
+dnf -y install wget
 ```
 
+Download Snappymail, extract it and remove original tarball file.
+
 ```bash
-rm -f latest.tar.gz
+wget --inet4-only https://snappymail.eu/repository/latest.tar.gz && tar -xzf latest.tar.gz && rm -f latest.tar.gz
 ```
 
 Set proper permissions
 
 ```bash
-find /var/www/lt0x.am/webmail -type d -exec chmod 755 {} \;
-```
-
-```bash
-find /var/www/lt0x.am/webmail -type f -exec chmod 644 {} \;
+find /var/www/lt0x.am/webmail -type d -exec chmod 755 {} \; &&  find /var/www/lt0x.am/webmail -type f -exec chmod 644 {} \;
 ```
 
 ```bash
@@ -516,65 +442,63 @@ chown -R apache:apache /var/www/lt0x.am/webmail
 
 Now try accessing  `http://apache.lt0x.am/webmail`
 
-You should be able to login with user `tester@lt0x.am`
+> You can use web browser in your windows, and set proxy server to trainer's Squid (that knows all our domains)
+> so that when you will type URL, proxy server make DNS resolution and should work.
+> Of course SSL certificate will remain self-signed, so you will get the warning about that.
 
-You should see incoming messages, <br>
-**but will not be able to send yet**.
+You should be able to login to Snappy Web Mail with user `tester@lt0x.am`
+(Also you need to manually create folders Sent, ...)
 
-We need to enable authorization for sending.
+You should see incoming mails and send mails to yourself <br>
+**but will not be able to send to others yet**.
+
+You need to enable authorization for external sending.
 
 ```bash
-sed -i 's/"useAuth": false/"useAuth": true/' /var/www/lt0x.am/webmail/data/_data_/_default_/domains/lt0x.am.json
+sed -i.bkp 's/"useAuth": false/"useAuth": true/' /var/www/lt0x.am/webmail/data/_data_/_default_/domains/lt0x.am.json
 ```
 
+Now try sending mails to Trainer's test mail address `tester@lt00.am`
 
-(Also we might need to manually create folders Sent, ...)
 
 > NOTE! Production installation requires Admin access configuration according to:
 > https://github.com/the-djmaze/snappymail/wiki/Installation-instructions#now-access-the-admin-page
-> 
+ 
+<br>
+<br>
+
+
+> Since we had problems with ip forwarding, so direct access between students is not working, 
+> below we will configure mail routing via Trainer's server
 
 ## Mail routing
 
-Mail routing may be organised in two ways:
+
+Mail routing may be organised in two steps:
 
 * Public MX-based routing
-  * to specify destination of mails coming from the world to **our domain**.
+  * to specify destination of incoming mails.
   <br>
-* Internal static forwarding to another mailserver
-  * to forward mails from one server to another 
-  * may be used for both **our domain** and **other domains**
-
+* Mail server configuration to forward mails to some mailserver
+  
 
 ### MX configuration to route mails via central Hub (Trainer's Server)
 
+Change the `MX` record in your zone `lt0x.am`
 
-Trainer should make changes in DNS configuration 
+Instead of
 
-* Add `A` record for it.
+`MX      0 mail`
 
-  * name:   `mx2` 
-  * type:   `A` 
-  * value:  `10.10.0.111`
-  
-* Add `PTR` record `111.0.10.10.in-addr.arpa.` 
-  `mx2.lt0x.am` PTR record:
+it should be
 
-  * type:		`PTR`
-  * name:       `111`
-  * value:	    `mx2.lt00.am.`
+`MX      0 mail.lt00.am`
 
+It means that your messages should be sent to Trainer's mailserver
 
+and restart the `named-chroot` process.
 
-Each student should make changes in DNS configuration 
-
-* **Modify** `MX` resource record for your domain to point to `mx2.lt00.am`
- 
-  * type:   `MX` 
-  * value:  `0 mx2.lt00.am.`
-
-  
-Now your domain mails will try to deliver via Trainer's server.  
+Now your domain mails will be sent to Trainer's server.  
 But it doesn't mean they will be accepted there.
 To have them accepted Trainer needs to add some configuration there too.
 
@@ -583,22 +507,32 @@ it should either be registered as:
 1. **local domain**, or 
 2. **domain to forward mails somewhere**.
 
-Below we configure the second variant for student's domains.
+Below Trainer configure the second variant for student's domains.
 
 ### Configuration of central Hub (Trainer's Server)
+
+**STUDENT'S DON'T NEED TO DE BELOW SECTION**
 
 Trainer should add following lines to `/etc/postfix/transport`
 
 With contents:
 ```bash
 cat >> /etc/postfix/transport << "ENDTEXT"
-lt01.am smtp:[lt01.am]:25
-lt02.am smtp:[lt02.am]:25
-lt03.am smtp:[lt03.am]:25
-lt04.am smtp:[lt04.am]:25
-lt05.am smtp:[lt05.am]:25
-lt06.am smtp:[lt06.am]:25
-lt07.am smtp:[lt07.am]:25
+lt01.am smtp:[mail.lt01.am]:25
+lt02.am smtp:[mail.lt02.am]:25
+lt03.am smtp:[mail.lt03.am]:25
+lt04.am smtp:[mail.lt04.am]:25
+lt05.am smtp:[mail.lt05.am]:25
+lt06.am smtp:[mail.lt06.am]:25
+lt07.am smtp:[mail.lt07.am]:25
+lt08.am smtp:[mail.lt08.am]:25
+lt09.am smtp:[mail.lt09.am]:25
+lt10.am smtp:[mail.lt10.am]:25
+lt11.am smtp:[mail.lt11.am]:25
+lt12.am smtp:[mail.lt12.am]:25
+lt13.am smtp:[mail.lt13.am]:25
+lt14.am smtp:[mail.lt14.am]:25
+lt15.am smtp:[mail.lt15.am]:25
 ENDTEXT
 ```
  
@@ -636,113 +570,6 @@ systemctl restart postfix
 Now:
 * try to send mail from one student to another 
 * and check logs where do they go.
-
-
-### Second MX as backup
-
-Each student should add new IP address `10.10.x.25` and make changes in DNS configuration 
-
-
-* Use `nmtui` to **add** new `10.10.x.25` IP address to second interface `enp0s8`
-
-* **Add** second `MX` record for your domain to point to `mx25.lt0x.am`
- 
-  * type:   `MX` 
-  * value:  `10 mx25.lt0x.am.`
-
-
-> NOTE ! We have set lower priority `10`  <br>
-> So mail will go here only if first (Trainer's) server will not respond.
-
-
-* Add `A` record for it.
-
-  * name:   `mx25` 
-  * type:   `A` 
-  * value:  `10.10.x.25`
-  
-
-* Add `PTR` record `25.x.10.10.in-addr.arpa.` <br>
-  `mx25.lt0x.am` PTR record:
-
-  * type:		`PTR`
-  * name:       `25`
-  * value:	    `mx25.lt0x.am.`
-
-> NOTE ! `PTR` record is not needed for our configuration, <br>
-> but in production config it is required !
-
-
-Now Trainer will shutdown his postfix.
-and you can try sending mails to another student's domains.
-
-After sending check logs to see how mail was routed.
-
-
-```bash
-tail /var/log/postfix.log
-```
-
-
-### Configuration of Students servers
-
-Here we will configure another variant to route your domain's mail to Trainer's server without MX.
-
-Put a `;` before each `MX` line in your domain config to comment out these records.
-
-Add following lines to `/etc/postfix/transport`
-
-With contents:
-```bash
-cat >> /etc/postfix/transport << "ENDTEXT"
-lt01.am smtp:[lt00.am]:25
-lt02.am smtp:[lt00.am]:25
-lt03.am smtp:[lt00.am]:25
-lt04.am smtp:[lt00.am]:25
-lt05.am smtp:[lt00.am]:25
-lt06.am smtp:[lt00.am]:25
-lt07.am smtp:[lt00.am]:25
-ENDTEXT
-```
-
-> IMPORTANT ! <br>
-> Before doing next step <br>
-> **EDIT** above `/etc/postfix/transport` file and remove **YOUR DOMAIN** line <br>
-> 
-> 
-
-
-Build that config
-```bash
-postmap /etc/postfix/transport
-```
-
-
-Add that to Postfix main config file `/etc/postfix/main.cf`
-
-```bash
-cat >> /etc/postfix/main.cf << "ENDTEXT"
-transport_maps = hash:/etc/postfix/transport
-ENDTEXT
-
-```
-
-Restart Postfix
-
-```bash
-systemctl restart postfix
-```
-    
-
-Now try sending mail to another domain and check the logs:
-
-```bash
-tail -f /var/log/postfix.log
-```
-
-
-
-
 
 
 
