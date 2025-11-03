@@ -304,7 +304,7 @@ iptables -nvL
  
 Try:
 ```bash
-telnet fb.com 80 
+curl -v fb.com
 ```
 
 
