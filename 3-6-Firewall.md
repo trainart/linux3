@@ -93,7 +93,7 @@ iptables -nL
 
 More informative command is with `-v` added, which will also give information about traffic flows.
 ```bash
-iptables -nvL
+iptables -vnL
 ```
 
 
@@ -136,14 +136,14 @@ Add rule to INPUT chain:<br>
 iptables -A INPUT -d 127.0.0.2 --jump REJECT
 ```
 
-Check: `iptables -nvL`
+Check: `iptables -vnL`
 
 Try if it works:
 ```bash
 ping -c 3 127.0.0.2
 ```
 
-Check again: `iptables -nvL` <br>
+Check again: `iptables -vnL` <br>
 You should see 3 more packet (in **pkts** column) filtered for that rule.
 
 
@@ -156,7 +156,7 @@ It is also possible to remove all rules:
 iptables -F
 ````
 
-Check:<br> `iptables -nvL`
+Check:<br> `iptables -vnL`
 
 Try if it works:
 ```bash
@@ -177,7 +177,7 @@ ping -c 2 8.8.8.8
 ```
 
 ```bash
-iptables -nvL 
+iptables -vnL 
 ```
 
 ping should work and you should see increase in number of 'pkts' for "RELATED,ESTABLISHED" chain
@@ -191,7 +191,7 @@ ping should not work, take longer time and exit without success.
 And you should see increase in number of packets for default INPUT 'polycy DROP'
 
 ```bash
-iptables -nvL 
+iptables -vnL 
 ```
 
 > * Can you explain the reason of this difference?
@@ -203,7 +203,7 @@ iptables -P INPUT ACCEPT  ; iptables -F
 
 And check the difference:
 ```bash
-iptables -nvL
+iptables -vnL
 ```
 
 ```bash
@@ -221,7 +221,7 @@ iptables -A INPUT -s 8.8.8.8/16 -j DROP
 
 Check:
 ```bash
-iptables -nvL
+iptables -vnL
 ```
 
 ```bash
@@ -246,7 +246,7 @@ iptables -F
 Check:
 
 ```bash
-iptables -nvL
+iptables -vnL
 ```
 
 Now everything should work
@@ -267,7 +267,7 @@ iptables -F ; iptables -A OUTPUT -d 8.8.8.8/16 -j DROP
 
 Check:
 ```bash
-iptables -nvL 
+iptables -vnL 
 ```
 
 ```bash
@@ -298,7 +298,7 @@ iptables -A OUTPUT -p tcp --dport 80 -j DROP
 
 Check:
 ```bash
-iptables -nvL 
+iptables -vnL 
 ```
 
  
@@ -397,7 +397,7 @@ iptables -F
 
 Check:
 ```bash
-iptables -nvL 
+iptables -vnL 
 ```
 
 
@@ -423,7 +423,7 @@ curl -v https://fb.com
 Both should not work and you should see increase in count numbers
 
 ```bash
-iptables -nvL 
+iptables -vnL 
 ```
 
 
@@ -431,7 +431,7 @@ Examples with NAT
 
 NAT is special case. To see NAT table specify table name with `-t nat`:
 ```bash
-iptables -nvL -t nat
+iptables -vnL -t nat
 ```
 
 We need to set rules in special chain POSTROUTING:
@@ -525,7 +525,7 @@ You can now run the result of the above command.
 and check if that rule has been added:
 
 ```bash
-iptables -nvL | grep '127.1.2.7'
+iptables -vnL | grep '127.1.2.7'
 ```
 
 Also we can remove it with `iptables`
@@ -535,7 +535,7 @@ iptables -D INPUT -s 127.1.2.7 -j DROP
 
 and check if that rule has been removed:
 ```bash
-iptables -nvL | grep '127.1.2.7'
+iptables -vnL | grep '127.1.2.7'
 ```
 
 More examples:
@@ -548,7 +548,7 @@ You can now run the result of the above command.
 and check if that rule has been added:
 
 ```bash
-iptables -nvL | grep '22'
+iptables -vnL | grep '22'
 ```
 
 You can notice warning:
@@ -611,7 +611,7 @@ firewall-cmd --state
 
 > Remember that behind **FirewallD** there is still `iptables`, <br>
 > so if firewalld is running you can also check the rules with
-> `iptables -nvL`
+> `iptables -vnL`
 
 
 #### Understanding the Basics
@@ -838,8 +838,7 @@ firewall-cmd --list-all --zone=drop
 Now let us permanently allow the HTTP service
 
 ```bash
-firewall-cmd --permanent --add-service=http
-firewall-cmd --reload
+firewall-cmd --permanent --add-service=http ;  firewall-cmd --reload
 ```
 
 > The  `--permanent` flag means the rule survives a reboot.
