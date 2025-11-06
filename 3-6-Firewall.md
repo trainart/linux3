@@ -97,7 +97,7 @@ iptables -vnL
 ```
 
 
-![iptables_chains.png](../linux_training/level3-2025-Additional/iptables_chains.png)
+![iptables_chains.png](iptables_chains.png)
 
 
 _(taken from: https://jensd.be/343/linux/forward-a-tcp-port-to-another-ip-or-port-using-nat-with-iptables)_
@@ -479,7 +479,7 @@ and  it still slowly becomes more popular.
 
 Nftables scheme is _(taken from https://wiki.nftables.org/wiki-nftables/index.php/Netfilter_hooks)_:
 
-![nf-hooks.png](../linux_training/level3-2025-Additional/nf-hooks.png)
+![nf-hooks.png](nf-hooks.png)
 
 You can try to determine whether your Linux is currently includes Nftables, using the following methods:
 

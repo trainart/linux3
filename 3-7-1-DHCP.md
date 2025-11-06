@@ -39,11 +39,13 @@ ENDTEXT
 ```
 
 Restart rsyslog:
+
 ```bash
 systemctl restart rsyslog
 ```
 
 Start & enable dnsmasq service to start on each boot
+
 ```bash
 systemctl enable --now dnsmasq
 ```
@@ -54,10 +56,9 @@ Check
 tail /var/log/dnsmasq.log
 ```
 
-### Assign static address to `ens0s9` interface 
+### Add new `ens0s9` interface in VM and assign static IP address
 
 Use `nmtui` to assign `ens0s9` interface static address `192.168.168.1/24`
-
 
 ### Configure Dnsmasq as DHCP only Server
 
