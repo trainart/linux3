@@ -8,24 +8,22 @@ Samba can act either as a primary domain controller or as a member. I can just b
 Samba uses the frequently used client/server protocols SMB (Server Message Block) or nowadays CIFS (Common Internet File System). 
 The latter is an open variant of SMB. If applications are compatible with SMB or CIFS, they can communicate with the Samba Server.
 
-Samba’s SMB/CIFS terminal client in Linux is called `smbclient`. 
-
-### Install Samba & start services
+### Install Samba 
 
 ```bash
-yum install -y samba samba-client ;\
-service nmb start ;\
-service smb start
+dnf install -y samba samba-client cifs-utils
 ```
-> Instead of old `service` command we can use modern `systemctl` as well, but this shows that `service` is still working.
 
-
-### Register existing Linux user in Samba system
-
-Type some password that will be used for Samba access only.
+Add firewall rule to runtime config, add it to permanent config too and list
 
 ```bash
-smbpasswd -a student
+firewall-cmd --add-service samba ; firewall-cmd --runtime-to-permanent ; firewall-cmd --list-services
+```
+
+### Start Samba services
+
+```bash
+systemctl start {smb,nmb} ; systemctl is-active {smb,nmb}
 ```
 
 ### Create simple configuration
@@ -34,8 +32,8 @@ smbpasswd -a student
 mv /etc/samba/smb.conf{,.backup} ;\
 cat << "EOF1" > /etc/samba/smb.conf
 [global]
-workgroup = MYGROUP
-server string = SAMBA SHARING
+workgroup = LINUXTRAINING
+server string = "SAMBA Linux Server"
 log file = /var/log/samba/log.%m
 max log size = 50
 wins support = Yes
@@ -47,16 +45,63 @@ passdb backend = tdbsam
 comment = Home Directories
 browseable = no
 writable = yes
-EOF1
-service nmb restart ;\
-service smb restart
 
+[docs]
+path = /srv/samba/docs
+read only = yes
+guest ok = yes
+browsable = yes
+
+[tmp]
+path = /tmp
+read only = No
+EOF1
 ```
 
-Now we have one shared resource:
-* homes - user writable home directory (each authenticated user will see here own home directory)
 
-Let's access it via Windows
+Create directories for `docs` share
+
+```bash
+mkdir -p /srv/samba/docs/
+```
+
+Create test file in `docs` share
+
+```bash
+echo "Test text"  > /srv/samba/docs/testfile.txt
+```
+
+Restart Samba services
+
+```bash
+systemctl restart {smb,nmb} 
+```
+
+We have configured 3 shared resource:
+
+* homes - user writable home directory (each authenticated user will see here own home directory)
+* docs - public readonly resource
+* tmp - public writable /tmp directory
+
+
+Let's see them
+
+### Register existing Linux user in Samba system
+
+Type some password that will be used for Samba access only.
+
+```bash
+smbpasswd -a student
+```
+
+Check Samba shared resources
+
+```bash
+smbclient -L localhost -U student
+```
+
+
+### Access Samba share via Windows
 
 * Open the "File Explorer" and on the left-panel right-click on "This PC".
 * Select "Add a network location", Then from menu select: 
@@ -66,116 +111,58 @@ Let's access it via Windows
 `\\<ip address>\homes`
 * Either go with `Next` or click on `Browse`
 
+> `<ip address>` will be your address in the same subnet with Windows.
+
 After entering credentials of user `student`, you should be able to see `student`'s home directory.
 
-
-Now let's add new share:
-* docs - public readonly resource
-
-```bash
-mkdir -p /opt/samba/docs/testdir ;\
-echo "Test text"  >> /opt/samba/docs/testfile.txt ;\
-cat << "EOF1" >> /etc/samba/smb.conf
-[docs]
-path = /opt/samba/docs
-read only = yes
-guest ok = yes
-browsable = yes
-EOF1
-service nmb restart ;\
-service smb restart
-
-```
-
-Try access the share again. You can see `docs` as well, but you will not be able to change anything there.
-
-Now let's add another new share:
-* tmp - public writable /tmp directory
-
-
-```bash
-cat << "EOF1" >> /etc/samba/smb.conf
-[tmp]
-path = /tmp
-read only = No
-EOF1
-
-service nmb restart ;\
-service smb restart
-```
-
-Try access the share again.
+Try access one level up.
 You should now see 3 shared resources:
 
 * homes - user writable home directory (each authenticated user will see here own home directory)
 * docs - public readonly resource
 * tmp - public writable /tmp directory
 
-
-Now let's create new Samba user `smbtest`
-
-```bash
-useradd -m -k /srv -d /opt/samba/smbtest -s /usr/sbin/nologin smbtest ;\
-echo "Test text 2" > /opt/samba/smbtest/testfile2.txt ;\
-smbpasswd -a smbtest ;\
-service nmb restart ;\
-service smb restart
-```
-
-Now try accessing with that new user `smbtest`
+Add text to test file and check via Windows Explorer that text was added
 
 ```bash
-smbclient //127.0.0.1/smbtest -U smbtest
+echo "Test text 2"  >> /srv/samba/docs/testfile.txt
 ```
-
-After connecting you should see `smb: \>` prompt.
-Try some commands. For example 
-```bash
-ls
-```
-
-Or `more` to see the test file we created
-
-```bash
-more testfile2.txt
-```
-
-You can quit **smbclient** with `q` command.
-
-
-In order to access from Windows we first need to disconnect previous connection with other user.
-
-```bash
-net use /delete \\<ip address>
-```
-
-Check with: 
-
-```bash
-net use
-```
-
-Now we can connect with this user `smbtest`
-
 
 ### Mount Samba share
 
-For mounting Samba share to Linux, you must install the `cifs-utils` package.
+`cifs-utils` package we installed before is for mounting Samba share to Linux.
 
 ```bash
-yum -y install cifs-utils
+mkdir /srv/smbsharemnt ; mount -t cifs -o username=student,pass=123456 //10.10.x.1/docs /srv/smbsharemnt
 ```
 
-```bash
-mount -t cifs -o username=smbtest,pass=123456 //127.0.0.1/smbtest /mnt/
-```
-
-Now you have mounted the Samba share locally to `/mnt`. 
+Now you have mounted the Samba share locally to `/srv/smbsharemnt`. 
 Check:
 
 ```bash
-df -h | grep '/mnt'
+df -h | grep '/srv/smbsharemnt'
 ```
 
-The same way it can be mounted remotely as well.
+Check file we created, but from mount point
+
+```bash
+cat /srv/smbsharemnt/testfile.txt
+```
+
+Add text
+
+```bash
+echo "Test text"  >> /srv/samba/docs/testfile.txt
+```
+
+Check again
+
+```bash
+cat /srv/smbsharemnt/testfile.txt
+```
+
+### PRACTICE
+
+Mount Trainer's Samba share `docs` to your `media` directory
+
 
